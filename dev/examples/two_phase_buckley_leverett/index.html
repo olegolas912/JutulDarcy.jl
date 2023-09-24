@@ -29,49 +29,49 @@ print_stats(report)</code></pre><pre class="documenter-example-output"><code cla
 │<span class="sgr1"> Iteration type </span>│<span class="sgr1">  Avg/step </span>│<span class="sgr1">  Avg/ministep </span>│<span class="sgr1"> Time per </span>│<span class="sgr1">    Total </span>│
 │<span class="sgr1">                </span>│<span class="sgr90"> 100 steps </span>│<span class="sgr90"> 100 ministeps </span>│<span class="sgr90">       ms </span>│<span class="sgr90"> (wasted) </span>│
 ├────────────────┼───────────┼───────────────┼──────────┼──────────┤
-│<span class="sgr1"> Newton         </span>│      3.31 │          3.31 │   3.8548 │  331 (0) │
-│<span class="sgr1"> Linearization  </span>│      4.31 │          4.31 │   2.9604 │  431 (0) │
-│<span class="sgr1"> Linear solver  </span>│      3.31 │          3.31 │   3.8548 │  331 (0) │
+│<span class="sgr1"> Newton         </span>│      3.31 │          3.31 │   3.4627 │  331 (0) │
+│<span class="sgr1"> Linearization  </span>│      4.31 │          4.31 │   2.6593 │  431 (0) │
+│<span class="sgr1"> Linear solver  </span>│      3.31 │          3.31 │   3.4627 │  331 (0) │
 ╰────────────────┴───────────┴───────────────┴──────────┴──────────╯
 ╭────────────────┬────────┬────────────┬────────╮
 │<span class="sgr1"> Timing type    </span>│<span class="sgr1">   Each </span>│<span class="sgr1">   Relative </span>│<span class="sgr1">  Total </span>│
 │<span class="sgr1">                </span>│<span class="sgr90">     ms </span>│<span class="sgr90"> Percentage </span>│<span class="sgr90">      s </span>│
 ├────────────────┼────────┼────────────┼────────┤
-│<span class="sgr1"> Properties     </span>│ 0.0191 │     0.50 % │ 0.0063 │
-│<span class="sgr1"> Equations      </span>│ 0.6235 │    21.06 % │ 0.2687 │
-│<span class="sgr1"> Assembly       </span>│ 0.0063 │     0.21 % │ 0.0027 │
-│<span class="sgr1"> Linear solve   </span>│ 0.4002 │    10.38 % │ 0.1325 │
+│<span class="sgr1"> Properties     </span>│ 0.0147 │     0.43 % │ 0.0049 │
+│<span class="sgr1"> Equations      </span>│ 0.4216 │    15.85 % │ 0.1817 │
+│<span class="sgr1"> Assembly       </span>│ 0.0041 │     0.15 % │ 0.0018 │
+│<span class="sgr1"> Linear solve   </span>│ 0.3183 │     9.19 % │ 0.1053 │
 │<span class="sgr1"> Preconditioner </span>│ 0.0000 │     0.00 % │ 0.0000 │
-│<span class="sgr1"> Update         </span>│ 0.0157 │     0.41 % │ 0.0052 │
-│<span class="sgr1"> Convergence    </span>│ 0.0209 │     0.71 % │ 0.0090 │
-│<span class="sgr1"> Input/Output   </span>│ 0.0051 │     0.04 % │ 0.0005 │
-│<span class="sgr1"> Other          </span>│ 2.5711 │    66.70 % │ 0.8510 │
+│<span class="sgr1"> Update         </span>│ 0.0094 │     0.27 % │ 0.0031 │
+│<span class="sgr1"> Convergence    </span>│ 0.0120 │     0.45 % │ 0.0052 │
+│<span class="sgr1"> Input/Output   </span>│ 0.0025 │     0.02 % │ 0.0002 │
+│<span class="sgr1"> Other          </span>│ 2.5495 │    73.63 % │ 0.8439 │
 ├────────────────┼────────┼────────────┼────────┤
-│<span class="sgr1"> Total          </span>│ 3.8548 │   100.00 % │ 1.2760 │
+│<span class="sgr1"> Total          </span>│ 3.4627 │   100.00 % │ 1.1461 │
 ╰────────────────┴────────┴────────────┴────────╯</code></pre><h2 id="Run-refined-version-(1000-cells,-1000-steps)"><a class="docs-heading-anchor" href="#Run-refined-version-(1000-cells,-1000-steps)">Run refined version (1000 cells, 1000 steps)</a><a id="Run-refined-version-(1000-cells,-1000-steps)-1"></a><a class="docs-heading-anchor-permalink" href="#Run-refined-version-(1000-cells,-1000-steps)" title="Permalink"></a></h2><p>Using a grid with 100 cells will not yield a fully converged solution. We can increase the number of cells at the cost of increasing the runtime a bit. Note that most of the time is spent in the linear solver, which uses a direct sparse LU factorization by default. For larger problems it is recommended to use an iterative solver.</p><pre><code class="language-julia hljs">states_refined, _, report_refined = solve_bl(nc = n_f);
 print_stats(report_refined)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">╭────────────────┬────────────┬────────────────┬──────────┬──────────╮
 │<span class="sgr1"> Iteration type </span>│<span class="sgr1">   Avg/step </span>│<span class="sgr1">   Avg/ministep </span>│<span class="sgr1"> Time per </span>│<span class="sgr1">    Total </span>│
 │<span class="sgr1">                </span>│<span class="sgr90"> 1000 steps </span>│<span class="sgr90"> 1000 ministeps </span>│<span class="sgr90">       ms </span>│<span class="sgr90"> (wasted) </span>│
 ├────────────────┼────────────┼────────────────┼──────────┼──────────┤
-│<span class="sgr1"> Newton         </span>│      3.265 │          3.265 │   3.0360 │ 3265 (0) │
-│<span class="sgr1"> Linearization  </span>│      4.265 │          4.265 │   2.3242 │ 4265 (0) │
-│<span class="sgr1"> Linear solver  </span>│      3.265 │          3.265 │   3.0360 │ 3265 (0) │
+│<span class="sgr1"> Newton         </span>│      3.265 │          3.265 │   2.7867 │ 3265 (0) │
+│<span class="sgr1"> Linearization  </span>│      4.265 │          4.265 │   2.1333 │ 4265 (0) │
+│<span class="sgr1"> Linear solver  </span>│      3.265 │          3.265 │   2.7867 │ 3265 (0) │
 ╰────────────────┴────────────┴────────────────┴──────────┴──────────╯
 ╭────────────────┬────────┬────────────┬────────╮
 │<span class="sgr1"> Timing type    </span>│<span class="sgr1">   Each </span>│<span class="sgr1">   Relative </span>│<span class="sgr1">  Total </span>│
 │<span class="sgr1">                </span>│<span class="sgr90">     ms </span>│<span class="sgr90"> Percentage </span>│<span class="sgr90">      s </span>│
 ├────────────────┼────────┼────────────┼────────┤
-│<span class="sgr1"> Properties     </span>│ 0.0972 │     3.20 % │ 0.3175 │
-│<span class="sgr1"> Equations      </span>│ 0.0803 │     3.45 % │ 0.3424 │
-│<span class="sgr1"> Assembly       </span>│ 0.0245 │     1.05 % │ 0.1045 │
-│<span class="sgr1"> Linear solve   </span>│ 2.6348 │    86.79 % │ 8.6027 │
+│<span class="sgr1"> Properties     </span>│ 0.0866 │     3.11 % │ 0.2827 │
+│<span class="sgr1"> Equations      </span>│ 0.0629 │     2.95 % │ 0.2681 │
+│<span class="sgr1"> Assembly       </span>│ 0.0225 │     1.06 % │ 0.0961 │
+│<span class="sgr1"> Linear solve   </span>│ 2.4533 │    88.04 % │ 8.0101 │
 │<span class="sgr1"> Preconditioner </span>│ 0.0000 │     0.00 % │ 0.0000 │
-│<span class="sgr1"> Update         </span>│ 0.0476 │     1.57 % │ 0.1554 │
-│<span class="sgr1"> Convergence    </span>│ 0.0342 │     1.47 % │ 0.1460 │
-│<span class="sgr1"> Input/Output   </span>│ 0.0128 │     0.13 % │ 0.0128 │
-│<span class="sgr1"> Other          </span>│ 0.0708 │     2.33 % │ 0.2312 │
+│<span class="sgr1"> Update         </span>│ 0.0413 │     1.48 % │ 0.1348 │
+│<span class="sgr1"> Convergence    </span>│ 0.0230 │     1.08 % │ 0.0981 │
+│<span class="sgr1"> Input/Output   </span>│ 0.0080 │     0.09 % │ 0.0080 │
+│<span class="sgr1"> Other          </span>│ 0.0614 │     2.21 % │ 0.2006 │
 ├────────────────┼────────┼────────────┼────────┤
-│<span class="sgr1"> Total          </span>│ 3.0360 │   100.00 % │ 9.9125 │
+│<span class="sgr1"> Total          </span>│ 2.7867 │   100.00 % │ 9.0984 │
 ╰────────────────┴────────┴────────────┴────────╯</code></pre><h2 id="Plot-results"><a class="docs-heading-anchor" href="#Plot-results">Plot results</a><a id="Plot-results-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-results" title="Permalink"></a></h2><p>We plot the saturation front for the base case at different times together with the final solution for the refined model. In this case, refining the grid by a factor 10 gave us significantly less smearing of the trailing front.</p><pre><code class="language-julia hljs">using CairoMakie
 x = range(0, stop = 1, length = n)
 x_f = range(0, stop = 1, length = n_f)
@@ -81,4 +81,4 @@ for i in 1:6:length(states)
     lines!(ax, x, states[i][:Saturations][1, :], color = :darkgray)
 end
 lines!(ax, x_f, states_refined[end][:Saturations][1, :], color = :red)
-f</code></pre><img src="9daa5341.png" alt="Example block output"/><h2 id="Example-on-GitHub"><a class="docs-heading-anchor" href="#Example-on-GitHub">Example on GitHub</a><a id="Example-on-GitHub-1"></a><a class="docs-heading-anchor-permalink" href="#Example-on-GitHub" title="Permalink"></a></h2><p>If you would like to run this example yourself, it can be downloaded from <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/main/examples/two_phase_buckley_leverett.jl">the JutulDarcy.jl GitHub repository</a>.</p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../two_phase_gravity_segregation/">« Gravity segregation</a><a class="docs-footer-nextpage" href="../two_phase_unstable_gravity/">Gravity circulation with CPR preconditioner »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.0.1 on <span class="colophon-date" title="Sunday 24 September 2023 18:53">Sunday 24 September 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+f</code></pre><img src="9daa5341.png" alt="Example block output"/><h2 id="Example-on-GitHub"><a class="docs-heading-anchor" href="#Example-on-GitHub">Example on GitHub</a><a id="Example-on-GitHub-1"></a><a class="docs-heading-anchor-permalink" href="#Example-on-GitHub" title="Permalink"></a></h2><p>If you would like to run this example yourself, it can be downloaded from <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/main/examples/two_phase_buckley_leverett.jl">the JutulDarcy.jl GitHub repository</a>.</p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../two_phase_gravity_segregation/">« Gravity segregation</a><a class="docs-footer-nextpage" href="../two_phase_unstable_gravity/">Gravity circulation with CPR preconditioner »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.0.1 on <span class="colophon-date" title="Sunday 24 September 2023 20:23">Sunday 24 September 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
