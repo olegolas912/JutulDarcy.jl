@@ -57,35 +57,35 @@ controls[:Injector] = I_ctrl
 controls[:Producer] = P_ctrl
 forces = setup_reservoir_forces(model, control = controls)
 ws, states = simulate_reservoir(state0, model, dt, parameters = parameters, forces = forces)
-#!</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">ReservoirSimResult with 365 entries:
+#!</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">ReservoirSimResult with 3 entries:
 
   wells (2 present):
     :Producer
     :Injector
     Results per well:
-       :Surface total rate =&gt; Vector{Float64} of size (365,)
-       :Surface oil rate =&gt; Vector{Float64} of size (365,)
-       :Bottom hole pressure =&gt; Vector{Float64} of size (365,)
-       :Surface gas rate =&gt; Vector{Float64} of size (365,)
-       :Surface liquid rate (water + oil) =&gt; Vector{Float64} of size (365,)
-       :Total surface mass rate =&gt; Vector{Float64} of size (365,)
+       :Surface total rate =&gt; Vector{Float64} of size (3,)
+       :Surface oil rate =&gt; Vector{Float64} of size (3,)
+       :Bottom hole pressure =&gt; Vector{Float64} of size (3,)
+       :Surface gas rate =&gt; Vector{Float64} of size (3,)
+       :Surface liquid rate (water + oil) =&gt; Vector{Float64} of size (3,)
+       :Total surface mass rate =&gt; Vector{Float64} of size (3,)
 
-  states (Vector with 365 entries, reservoir variables for each state)
+  states (Vector with 3 entries, reservoir variables for each state)
     :OverallMoleFractions =&gt; Matrix{Float64} of size (5, 800)
     :Saturations =&gt; Matrix{Float64} of size (2, 800)
     :Pressure =&gt; Vector{Float64} of size (800,)
     :TotalMasses =&gt; Matrix{Float64} of size (5, 800)
 
   time (report time for each state)
-     Vector{Float64} of length 365
+     Vector{Float64} of length 3
 
   result (extended states, reports)
-     SimResult with 365 entries
+     SimResult with 3 entries
 
   extra
      Dict{Any, Any} with with no data.
 
-  Completed at Sep. 24 2023 20:09 after 53 seconds, 409 milliseconds.</code></pre><h2 id="Once-the-simulation-is-done,-we-can-plot-the-states"><a class="docs-heading-anchor" href="#Once-the-simulation-is-done,-we-can-plot-the-states">Once the simulation is done, we can plot the states</a><a id="Once-the-simulation-is-done,-we-can-plot-the-states-1"></a><a class="docs-heading-anchor-permalink" href="#Once-the-simulation-is-done,-we-can-plot-the-states" title="Permalink"></a></h2><pre><code class="language-julia hljs">sg = states[end][:OverallMoleFractions][2, :]
+  Completed at Oct. 18 2023 15:10 after 23 seconds, 942 milliseconds.</code></pre><h2 id="Once-the-simulation-is-done,-we-can-plot-the-states"><a class="docs-heading-anchor" href="#Once-the-simulation-is-done,-we-can-plot-the-states">Once the simulation is done, we can plot the states</a><a id="Once-the-simulation-is-done,-we-can-plot-the-states-1"></a><a class="docs-heading-anchor-permalink" href="#Once-the-simulation-is-done,-we-can-plot-the-states" title="Permalink"></a></h2><pre><code class="language-julia hljs">sg = states[end][:OverallMoleFractions][2, :]
 fig, ax, p = plot_cell_data(g, sg)
 fig
 #!
@@ -95,4 +95,4 @@ fig
 #!
 p = states[end][:Pressure]
 fig, ax, p = plot_cell_data(g, p)
-fig</code></pre><img src="8747a66c.png" alt="Example block output"/><h2 id="Example-on-GitHub"><a class="docs-heading-anchor" href="#Example-on-GitHub">Example on GitHub</a><a id="Example-on-GitHub-1"></a><a class="docs-heading-anchor-permalink" href="#Example-on-GitHub" title="Permalink"></a></h2><p>If you would like to run this example yourself, it can be downloaded from <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/main/examples/compositional_5components.jl">the JutulDarcy.jl GitHub repository</a>.</p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../co2_brine_2d_vertical/">« Intro to compositional flow</a><a class="docs-footer-nextpage" href="../optimize_simple_bl/">Parameter optimization of Buckley-Leverett »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.0.1 on <span class="colophon-date" title="Sunday 24 September 2023 21:05">Sunday 24 September 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+fig</code></pre><img src="5e5a3da4.png" alt="Example block output"/><h2 id="Example-on-GitHub"><a class="docs-heading-anchor" href="#Example-on-GitHub">Example on GitHub</a><a id="Example-on-GitHub-1"></a><a class="docs-heading-anchor-permalink" href="#Example-on-GitHub" title="Permalink"></a></h2><p>If you would like to run this example yourself, it can be downloaded from <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/main/examples/compositional_5components.jl">the JutulDarcy.jl GitHub repository</a>.</p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../co2_brine_2d_vertical/">« Intro to compositional flow</a><a class="docs-footer-nextpage" href="../optimize_simple_bl/">Parameter optimization of Buckley-Leverett »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.1.1 on <span class="colophon-date" title="Wednesday 18 October 2023 15:54">Wednesday 18 October 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

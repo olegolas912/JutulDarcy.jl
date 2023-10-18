@@ -43,35 +43,35 @@ controls = Dict()
 controls[:Injector] = I_ctrl
 controls[:Producer] = P_ctrl
 forces = setup_reservoir_forces(model, control = controls)
-ws, states = simulate_reservoir(state0, model, dt, parameters = parameters, forces = forces)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">ReservoirSimResult with 206 entries:
+ws, states = simulate_reservoir(state0, model, dt, parameters = parameters, forces = forces)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">ReservoirSimResult with 57 entries:
 
   wells (2 present):
     :Producer
     :Injector
     Results per well:
-       :Surface total rate =&gt; Vector{Float64} of size (206,)
-       :Surface oil rate =&gt; Vector{Float64} of size (206,)
-       :Bottom hole pressure =&gt; Vector{Float64} of size (206,)
-       :Surface gas rate =&gt; Vector{Float64} of size (206,)
-       :Surface liquid rate (water + oil) =&gt; Vector{Float64} of size (206,)
-       :Total surface mass rate =&gt; Vector{Float64} of size (206,)
+       :Surface total rate =&gt; Vector{Float64} of size (57,)
+       :Surface oil rate =&gt; Vector{Float64} of size (57,)
+       :Bottom hole pressure =&gt; Vector{Float64} of size (57,)
+       :Surface gas rate =&gt; Vector{Float64} of size (57,)
+       :Surface liquid rate (water + oil) =&gt; Vector{Float64} of size (57,)
+       :Total surface mass rate =&gt; Vector{Float64} of size (57,)
 
-  states (Vector with 206 entries, reservoir variables for each state)
+  states (Vector with 57 entries, reservoir variables for each state)
     :OverallMoleFractions =&gt; Matrix{Float64} of size (2, 1000)
     :Saturations =&gt; Matrix{Float64} of size (2, 1000)
     :Pressure =&gt; Vector{Float64} of size (1000,)
     :TotalMasses =&gt; Matrix{Float64} of size (2, 1000)
 
   time (report time for each state)
-     Vector{Float64} of length 206
+     Vector{Float64} of length 57
 
   result (extended states, reports)
-     SimResult with 206 entries
+     SimResult with 57 entries
 
   extra
      Dict{Any, Any} with with no data.
 
-  Completed at Sep. 24 2023 20:09 after 28 seconds, 801 milliseconds.</code></pre><h2 id="Once-the-simulation-is-done,-we-can-plot-the-states"><a class="docs-heading-anchor" href="#Once-the-simulation-is-done,-we-can-plot-the-states">Once the simulation is done, we can plot the states</a><a id="Once-the-simulation-is-done,-we-can-plot-the-states-1"></a><a class="docs-heading-anchor-permalink" href="#Once-the-simulation-is-done,-we-can-plot-the-states" title="Permalink"></a></h2><p>Note that this example is intended for static publication in the documentation. For interactive visualization you can replace CairoMakie with GLMakie and use functions like <code>plot_interactive</code> to interactively visualize the states.</p><pre><code class="language-julia hljs">z = states[end][:OverallMoleFractions][2, :]
+  Completed at Oct. 18 2023 15:10 after 31 seconds, 782 milliseconds.</code></pre><h2 id="Once-the-simulation-is-done,-we-can-plot-the-states"><a class="docs-heading-anchor" href="#Once-the-simulation-is-done,-we-can-plot-the-states">Once the simulation is done, we can plot the states</a><a id="Once-the-simulation-is-done,-we-can-plot-the-states-1"></a><a class="docs-heading-anchor-permalink" href="#Once-the-simulation-is-done,-we-can-plot-the-states" title="Permalink"></a></h2><p>Note that this example is intended for static publication in the documentation. For interactive visualization you can replace CairoMakie with GLMakie and use functions like <code>plot_interactive</code> to interactively visualize the states.</p><pre><code class="language-julia hljs">z = states[end][:OverallMoleFractions][2, :]
 function plot_vertical(x, t)
     data = reshape(x, (nx, nz))
     data = data[:, end:-1:1]
@@ -79,6 +79,6 @@ function plot_vertical(x, t)
     ax.title = t
     Colorbar(fig[1, 2])
     fig
-end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">plot_vertical (generic function with 1 method)</code></pre><h3 id="Plot-final-CO2-mole-fraction"><a class="docs-heading-anchor" href="#Plot-final-CO2-mole-fraction">Plot final CO2 mole fraction</a><a id="Plot-final-CO2-mole-fraction-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-final-CO2-mole-fraction" title="Permalink"></a></h3><pre><code class="language-julia hljs">plot_vertical(z, &quot;CO2&quot;)</code></pre><img src="2cd0152a.png" alt="Example block output"/><h3 id="Plot-final-vapor-saturation"><a class="docs-heading-anchor" href="#Plot-final-vapor-saturation">Plot final vapor saturation</a><a id="Plot-final-vapor-saturation-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-final-vapor-saturation" title="Permalink"></a></h3><pre><code class="language-julia hljs">sg = states[end][:Saturations][2, :]
-plot_vertical(sg, &quot;Vapor saturation&quot;)</code></pre><img src="bdfc9f96.png" alt="Example block output"/><h3 id="Plot-final-pressure"><a class="docs-heading-anchor" href="#Plot-final-pressure">Plot final pressure</a><a id="Plot-final-pressure-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-final-pressure" title="Permalink"></a></h3><pre><code class="language-julia hljs">p = states[end][:Pressure]
-plot_vertical(p, &quot;Pressure&quot;)</code></pre><img src="2a75b4a7.png" alt="Example block output"/><h2 id="Example-on-GitHub"><a class="docs-heading-anchor" href="#Example-on-GitHub">Example on GitHub</a><a id="Example-on-GitHub-1"></a><a class="docs-heading-anchor-permalink" href="#Example-on-GitHub" title="Permalink"></a></h2><p>If you would like to run this example yourself, it can be downloaded from <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/main/examples/co2_brine_2d_vertical.jl">the JutulDarcy.jl GitHub repository</a>.</p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../five_spot_ensemble/">« Quarter-five-spot with variation</a><a class="docs-footer-nextpage" href="../compositional_5components/">Compositional with five components »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.0.1 on <span class="colophon-date" title="Sunday 24 September 2023 21:05">Sunday 24 September 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">plot_vertical (generic function with 1 method)</code></pre><h3 id="Plot-final-CO2-mole-fraction"><a class="docs-heading-anchor" href="#Plot-final-CO2-mole-fraction">Plot final CO2 mole fraction</a><a id="Plot-final-CO2-mole-fraction-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-final-CO2-mole-fraction" title="Permalink"></a></h3><pre><code class="language-julia hljs">plot_vertical(z, &quot;CO2&quot;)</code></pre><img src="2c322bdd.png" alt="Example block output"/><h3 id="Plot-final-vapor-saturation"><a class="docs-heading-anchor" href="#Plot-final-vapor-saturation">Plot final vapor saturation</a><a id="Plot-final-vapor-saturation-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-final-vapor-saturation" title="Permalink"></a></h3><pre><code class="language-julia hljs">sg = states[end][:Saturations][2, :]
+plot_vertical(sg, &quot;Vapor saturation&quot;)</code></pre><img src="b0c53c55.png" alt="Example block output"/><h3 id="Plot-final-pressure"><a class="docs-heading-anchor" href="#Plot-final-pressure">Plot final pressure</a><a id="Plot-final-pressure-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-final-pressure" title="Permalink"></a></h3><pre><code class="language-julia hljs">p = states[end][:Pressure]
+plot_vertical(p, &quot;Pressure&quot;)</code></pre><img src="1f510d16.png" alt="Example block output"/><h2 id="Example-on-GitHub"><a class="docs-heading-anchor" href="#Example-on-GitHub">Example on GitHub</a><a id="Example-on-GitHub-1"></a><a class="docs-heading-anchor-permalink" href="#Example-on-GitHub" title="Permalink"></a></h2><p>If you would like to run this example yourself, it can be downloaded from <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/main/examples/co2_brine_2d_vertical.jl">the JutulDarcy.jl GitHub repository</a>.</p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../five_spot_ensemble/">« Quarter-five-spot with variation</a><a class="docs-footer-nextpage" href="../compositional_5components/">Compositional with five components »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.1.1 on <span class="colophon-date" title="Wednesday 18 October 2023 15:54">Wednesday 18 October 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
