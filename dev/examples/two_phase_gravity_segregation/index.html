@@ -4,10 +4,13 @@ nc = 100
 Darcy, bar, kg, meter, day = si_units(:darcy, :bar, :kilogram, :meter, :day)
 
 g = CartesianMesh((1, 1, nc), (1.0, 1.0, 10.0))
-domain = reservoir_domain(g, permeability = 1.0*Darcy)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">DataDomain wrapping CartesianMesh (3D) with 1x1x100=100 cells with 14 data fields added:
+domain = reservoir_domain(g, permeability = 1.0*Darcy)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">DataDomain wrapping CartesianMesh (3D) with 1x1x100=100 cells with 17 data fields added:
   100 Cells
     :permeability =&gt; 100 Vector{Float64}
     :porosity =&gt; 100 Vector{Float64}
+    :rock_thermal_conductivity =&gt; 100 Vector{Float64}
+    :fluid_thermal_conductivity =&gt; 100 Vector{Float64}
+    :rock_density =&gt; 100 Vector{Float64}
     :cell_centroids =&gt; 3×100 Matrix{Float64}
     :volumes =&gt; 100 Vector{Float64}
   99 Faces
@@ -44,10 +47,13 @@ model = SimulationModel(domain, sys)</code></pre><pre class="documenter-example-
     FullyImplicitFormulation()
 
   data_domain:
-    DataDomain wrapping CartesianMesh (3D) with 1x1x100=100 cells with 14 data fields added:
+    DataDomain wrapping CartesianMesh (3D) with 1x1x100=100 cells with 17 data fields added:
   100 Cells
     :permeability =&gt; 100 Vector{Float64}
     :porosity =&gt; 100 Vector{Float64}
+    :rock_thermal_conductivity =&gt; 100 Vector{Float64}
+    :fluid_thermal_conductivity =&gt; 100 Vector{Float64}
+    :rock_density =&gt; 100 Vector{Float64}
     :cell_centroids =&gt; 3×100 Matrix{Float64}
     :volumes =&gt; 100 Vector{Float64}
   99 Faces
@@ -140,10 +146,10 @@ states, report = simulate(state0, model, timesteps, info_level = -1)</code></pre
     :total_time =&gt; Float64
     :output_time =&gt; Float64
 
-  Completed at Jan. 08 2024 12:01 after 876 milliseconds.</code></pre><h2 id="Plot-results"><a class="docs-heading-anchor" href="#Plot-results">Plot results</a><a id="Plot-results-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-results" title="Permalink"></a></h2><p>The 1D nature of the problem allows us to plot all timesteps simultaneously in 2D. We see that the heavy fluid, colored blue, is initially at the top of the domain and the lighter fluid is at the bottom. These gradually switch places until all the heavy fluid is at the lower part of the column.</p><pre><code class="language-julia hljs">using CairoMakie
+  Completed at Jan. 23 2024 15:01 after 492 milliseconds, 182 microseconds, 620 nanoseconds.</code></pre><h2 id="Plot-results"><a class="docs-heading-anchor" href="#Plot-results">Plot results</a><a id="Plot-results-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-results" title="Permalink"></a></h2><p>The 1D nature of the problem allows us to plot all timesteps simultaneously in 2D. We see that the heavy fluid, colored blue, is initially at the top of the domain and the lighter fluid is at the bottom. These gradually switch places until all the heavy fluid is at the lower part of the column.</p><pre><code class="language-julia hljs">using CairoMakie
 tmp = vcat(map((x) -&gt; x[:Saturations][1, :]&#39;, states)...)
 f = Figure()
 ax = Axis(f[1, 1], xlabel = &quot;Time&quot;, ylabel = &quot;Depth&quot;, title = &quot;Gravity segregation&quot;)
 hm = heatmap!(ax, tmp, colormap = :seismic)
 Colorbar(f[1, 2], hm)
-f</code></pre><img src="c6855c85.png" alt="Example block output"/><h2 id="Example-on-GitHub"><a class="docs-heading-anchor" href="#Example-on-GitHub">Example on GitHub</a><a id="Example-on-GitHub-1"></a><a class="docs-heading-anchor-permalink" href="#Example-on-GitHub" title="Permalink"></a></h2><p>If you would like to run this example yourself, it can be downloaded from <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/main/examples/two_phase_gravity_segregation.jl">the JutulDarcy.jl GitHub repository</a>.</p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../intro/">« Getting started</a><a class="docs-footer-nextpage" href="../two_phase_buckley_leverett/">Two-phase Buckley-Leverett »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.2.1 on <span class="colophon-date" title="Monday 8 January 2024 12:25">Monday 8 January 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+f</code></pre><img src="c6855c85.png" alt="Example block output"/><h2 id="Example-on-GitHub"><a class="docs-heading-anchor" href="#Example-on-GitHub">Example on GitHub</a><a id="Example-on-GitHub-1"></a><a class="docs-heading-anchor-permalink" href="#Example-on-GitHub" title="Permalink"></a></h2><p>If you would like to run this example yourself, it can be downloaded from <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/main/examples/two_phase_gravity_segregation.jl">the JutulDarcy.jl GitHub repository</a>.</p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../intro/">« Getting started</a><a class="docs-footer-nextpage" href="../two_phase_buckley_leverett/">Two-phase Buckley-Leverett »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.2.1 on <span class="colophon-date" title="Tuesday 23 January 2024 15:21">Tuesday 23 January 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
