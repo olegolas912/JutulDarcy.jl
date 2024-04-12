@@ -189,7 +189,7 @@ forces = setup_reservoir_forces(model, control = controls)</code></pre><h3 id="S
   extra
      Dict{Any, Any} with keys :simulator, :config
 
-  Completed at Apr. 12 2024 12:04 after 5 seconds, 440 milliseconds, 48.6 microseconds.</code></pre><p>We can interactively look at the well results in the command line:</p><pre><code class="language-julia hljs">wd(:Producer)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr1">Legend</span>
+  Completed at Apr. 12 2024 13:04 after 5 seconds, 191 milliseconds, 392.1 microseconds.</code></pre><p>We can interactively look at the well results in the command line:</p><pre><code class="language-julia hljs">wd(:Producer)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr1">Legend</span>
 ┌───────────┬──────────────────────┬──────┬─────────────────────────┐
 │<span class="sgr1">     Label </span>│<span class="sgr1">          Description </span>│<span class="sgr1"> Unit </span>│<span class="sgr1">        Type of quantity </span>│
 ├───────────┼──────────────────────┼──────┼─────────────────────────┤
@@ -206,31 +206,31 @@ forces = setup_reservoir_forces(model, control = controls)</code></pre><h3 id="S
 │<span class="sgr1">   time </span>│<span class="sgr1">        lrat </span>│<span class="sgr1">        orat </span>│<span class="sgr1"> control </span>│<span class="sgr1">   bhp </span>│<span class="sgr1"> mass_rate </span>│<span class="sgr1">       rate </span>│<span class="sgr1">         grat </span>│
 │<span class="sgr90">   days </span>│<span class="sgr90">        m³/s </span>│<span class="sgr90">        m³/s </span>│<span class="sgr90">       - </span>│<span class="sgr90">    Pa </span>│<span class="sgr90">      kg/s </span>│<span class="sgr90">       m³/s </span>│<span class="sgr90">         m³/s </span>│
 ├────────┼─────────────┼─────────────┼─────────┼───────┼───────────┼────────────┼──────────────┤
-│  365.0 │  -0.0375291 │  -0.0375291 │     bhp │ 1.0e7 │  -37.5291 │ -0.0375291 │ -5.04452e-12 │
-│  730.0 │    -0.03754 │    -0.03754 │     bhp │ 1.0e7 │    -37.54 │   -0.03754 │  -3.24181e-9 │
-│ 1095.0 │  -0.0375455 │  -0.0375455 │     bhp │ 1.0e7 │  -37.5456 │ -0.0375462 │  -7.57931e-7 │
-│ 1460.0 │  -0.0375355 │  -0.0375355 │     bhp │ 1.0e7 │   -37.537 │ -0.0375507 │   -1.5232e-5 │
-│ 1825.0 │  -0.0374267 │  -0.0374267 │     bhp │ 1.0e7 │  -37.4397 │ -0.0375563 │ -0.000129539 │
-│ 2190.0 │  -0.0368988 │  -0.0368988 │     bhp │ 1.0e7 │  -36.9655 │ -0.0375657 │ -0.000666936 │
-│ 2555.0 │  -0.0355222 │  -0.0355222 │     bhp │ 1.0e7 │  -35.7286 │ -0.0375862 │  -0.00206405 │
-│ 2920.0 │   -0.033428 │   -0.033428 │     bhp │ 1.0e7 │  -33.8465 │ -0.0376126 │  -0.00418454 │
-│ 3285.0 │  -0.0312288 │  -0.0312288 │     bhp │ 1.0e7 │  -31.8702 │ -0.0376435 │  -0.00641469 │
-│ 3650.0 │  -0.0286666 │  -0.0286666 │     bhp │ 1.0e7 │  -29.5675 │ -0.0376761 │  -0.00900955 │
-│ 4015.0 │  -0.0261816 │  -0.0261816 │     bhp │ 1.0e7 │  -27.3344 │ -0.0377099 │   -0.0115284 │
-│ 4380.0 │  -0.0239841 │  -0.0239841 │     bhp │ 1.0e7 │  -25.3597 │ -0.0377398 │   -0.0137556 │
-│ 4745.0 │  -0.0217708 │  -0.0217708 │     bhp │ 1.0e7 │  -23.3708 │ -0.0377712 │   -0.0160004 │
-│ 5110.0 │  -0.0199538 │  -0.0199538 │     bhp │ 1.0e7 │  -21.7379 │ -0.0377945 │   -0.0178407 │
-│ 5475.0 │  -0.0180567 │  -0.0180567 │     bhp │ 1.0e7 │  -20.0332 │ -0.0378216 │   -0.0197649 │
-│ 5840.0 │  -0.0165414 │  -0.0165414 │     bhp │ 1.0e7 │  -18.6712 │ -0.0378395 │   -0.0212981 │
-│ 6205.0 │  -0.0150462 │  -0.0150462 │     bhp │ 1.0e7 │  -17.3278 │ -0.0378623 │   -0.0228161 │
-│ 6570.0 │  -0.0136251 │  -0.0136251 │     bhp │ 1.0e7 │  -16.0508 │ -0.0378814 │   -0.0242563 │
-│ 6935.0 │  -0.0125446 │  -0.0125446 │     bhp │ 1.0e7 │  -15.0796 │ -0.0378946 │     -0.02535 │
-│ 7300.0 │  -0.0113764 │  -0.0113764 │     bhp │ 1.0e7 │  -14.0299 │ -0.0379113 │   -0.0265348 │
-│ 7665.0 │  -0.0103037 │  -0.0103037 │     bhp │ 1.0e7 │  -13.0659 │ -0.0379257 │    -0.027622 │
-│ 8030.0 │ -0.00942679 │ -0.00942679 │     bhp │ 1.0e7 │  -12.2778 │ -0.0379367 │   -0.0285099 │
-│ 8395.0 │ -0.00857686 │ -0.00857686 │     bhp │ 1.0e7 │   -11.514 │ -0.0379482 │   -0.0293714 │
-│ 8760.0 │ -0.00764955 │ -0.00764955 │     bhp │ 1.0e7 │  -10.6807 │ -0.0379612 │   -0.0303116 │
-│ 9125.0 │ -0.00684265 │ -0.00684265 │     bhp │ 1.0e7 │  -9.95557 │ -0.0379718 │   -0.0311292 │
+│  365.0 │  -0.0375295 │  -0.0375295 │     bhp │ 1.0e7 │  -37.5295 │ -0.0375295 │ -1.42248e-12 │
+│  730.0 │  -0.0375399 │  -0.0375399 │     bhp │ 1.0e7 │  -37.5399 │ -0.0375399 │  -2.00231e-9 │
+│ 1095.0 │  -0.0375458 │  -0.0375458 │     bhp │ 1.0e7 │  -37.5458 │  -0.037546 │  -2.01007e-7 │
+│ 1460.0 │  -0.0375402 │  -0.0375402 │     bhp │ 1.0e7 │  -37.5413 │ -0.0375512 │  -1.09328e-5 │
+│ 1825.0 │  -0.0374433 │  -0.0374433 │     bhp │ 1.0e7 │  -37.4546 │ -0.0375561 │ -0.000112799 │
+│ 2190.0 │  -0.0369542 │  -0.0369542 │     bhp │ 1.0e7 │  -37.0154 │ -0.0375656 │ -0.000611419 │
+│ 2555.0 │  -0.0355944 │  -0.0355944 │     bhp │ 1.0e7 │  -35.7935 │ -0.0375853 │  -0.00199089 │
+│ 2920.0 │  -0.0335086 │  -0.0335086 │     bhp │ 1.0e7 │  -33.9191 │ -0.0376129 │  -0.00410421 │
+│ 3285.0 │  -0.0312535 │  -0.0312535 │     bhp │ 1.0e7 │  -31.8924 │ -0.0376429 │  -0.00638947 │
+│ 3650.0 │  -0.0286501 │  -0.0286501 │     bhp │ 1.0e7 │  -29.5528 │ -0.0376771 │  -0.00902701 │
+│ 4015.0 │   -0.026178 │   -0.026178 │     bhp │ 1.0e7 │  -27.3313 │ -0.0377103 │   -0.0115323 │
+│ 4380.0 │  -0.0239736 │  -0.0239736 │     bhp │ 1.0e7 │  -25.3503 │   -0.03774 │   -0.0137664 │
+│ 4745.0 │  -0.0217502 │  -0.0217502 │     bhp │ 1.0e7 │  -23.3523 │ -0.0377714 │   -0.0160212 │
+│ 5110.0 │   -0.019927 │   -0.019927 │     bhp │ 1.0e7 │  -21.7139 │ -0.0377954 │   -0.0178683 │
+│ 5475.0 │  -0.0180466 │  -0.0180466 │     bhp │ 1.0e7 │  -20.0241 │ -0.0378219 │   -0.0197753 │
+│ 5840.0 │  -0.0165412 │  -0.0165412 │     bhp │ 1.0e7 │  -18.6711 │   -0.03784 │   -0.0212988 │
+│ 6205.0 │  -0.0150127 │  -0.0150127 │     bhp │ 1.0e7 │  -17.2977 │ -0.0378627 │   -0.0228501 │
+│ 6570.0 │  -0.0136246 │  -0.0136246 │     bhp │ 1.0e7 │  -16.0503 │ -0.0378813 │   -0.0242567 │
+│ 6935.0 │  -0.0125558 │  -0.0125558 │     bhp │ 1.0e7 │  -15.0897 │ -0.0378941 │   -0.0253383 │
+│ 7300.0 │  -0.0112948 │  -0.0112948 │     bhp │ 1.0e7 │  -13.9567 │ -0.0379136 │   -0.0266189 │
+│ 7665.0 │  -0.0101733 │  -0.0101733 │     bhp │ 1.0e7 │  -12.9488 │ -0.0379277 │   -0.0277544 │
+│ 8030.0 │ -0.00937581 │ -0.00937581 │     bhp │ 1.0e7 │  -12.2319 │ -0.0379367 │   -0.0285609 │
+│ 8395.0 │ -0.00853848 │ -0.00853848 │     bhp │ 1.0e7 │  -11.4795 │ -0.0379487 │   -0.0294103 │
+│ 8760.0 │ -0.00752457 │ -0.00752457 │     bhp │ 1.0e7 │  -10.5686 │ -0.0379644 │   -0.0304398 │
+│ 9125.0 │ -0.00669682 │ -0.00669682 │     bhp │ 1.0e7 │  -9.82452 │ -0.0379738 │    -0.031277 │
 └────────┴─────────────┴─────────────┴─────────┴───────┴───────────┴────────────┴──────────────┘</code></pre><p>Let us look at the pressure evolution in the injector:</p><pre><code class="language-julia hljs">wd(:Injector, :bhp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr1">Legend</span>
 ┌───────┬──────────────────────┬──────┬──────────────────┐
 │<span class="sgr1"> Label </span>│<span class="sgr1">          Description </span>│<span class="sgr1"> Unit </span>│<span class="sgr1"> Type of quantity </span>│
@@ -242,31 +242,31 @@ forces = setup_reservoir_forces(model, control = controls)</code></pre><h3 id="S
 │<span class="sgr1">   time </span>│<span class="sgr1">       bhp </span>│
 │<span class="sgr90">   days </span>│<span class="sgr90">        Pa </span>│
 ├────────┼───────────┤
-│  365.0 │ 2.67553e7 │
+│  365.0 │ 2.67554e7 │
 │  730.0 │ 2.67591e7 │
-│ 1095.0 │ 2.67613e7 │
-│ 1460.0 │ 2.67628e7 │
+│ 1095.0 │ 2.67612e7 │
+│ 1460.0 │  2.6763e7 │
 │ 1825.0 │ 2.67643e7 │
-│ 2190.0 │ 2.67658e7 │
-│ 2555.0 │ 2.67682e7 │
-│ 2920.0 │   2.677e7 │
-│ 3285.0 │ 2.67708e7 │
-│ 3650.0 │ 2.67674e7 │
-│ 4015.0 │ 2.67634e7 │
-│ 4380.0 │ 2.67566e7 │
-│ 4745.0 │ 2.67459e7 │
-│ 5110.0 │ 2.67348e7 │
-│ 5475.0 │ 2.67217e7 │
-│ 5840.0 │ 2.67097e7 │
-│ 6205.0 │ 2.66972e7 │
+│ 2190.0 │ 2.67659e7 │
+│ 2555.0 │ 2.67681e7 │
+│ 2920.0 │ 2.67704e7 │
+│ 3285.0 │ 2.67707e7 │
+│ 3650.0 │ 2.67676e7 │
+│ 4015.0 │ 2.67636e7 │
+│ 4380.0 │ 2.67565e7 │
+│ 4745.0 │ 2.67458e7 │
+│ 5110.0 │ 2.67347e7 │
+│ 5475.0 │ 2.67216e7 │
+│ 5840.0 │ 2.67098e7 │
+│ 6205.0 │ 2.66969e7 │
 │ 6570.0 │ 2.66829e7 │
 │ 6935.0 │ 2.66704e7 │
-│ 7300.0 │ 2.66563e7 │
-│ 7665.0 │ 2.66426e7 │
-│ 8030.0 │ 2.66306e7 │
-│ 8395.0 │ 2.66175e7 │
-│ 8760.0 │  2.6603e7 │
-│ 9125.0 │ 2.65893e7 │
+│ 7300.0 │ 2.66557e7 │
+│ 7665.0 │  2.6641e7 │
+│ 8030.0 │ 2.66297e7 │
+│ 8395.0 │ 2.66169e7 │
+│ 8760.0 │ 2.66013e7 │
+│ 9125.0 │ 2.65867e7 │
 └────────┴───────────┘</code></pre><p>If we have a plotting package available, we can visualize the results too:</p><pre><code class="language-julia hljs">using GLMakie
 grat = wd[:Producer, :grat]
 lrat = wd[:Producer, :lrat]
@@ -283,4 +283,4 @@ ax = Axis(fig[1, 2],
     ylabel = &quot;Production rate / m³/day&quot;)
 lines!(ax, t/day, abs.(grat).*day)
 lines!(ax, t/day, abs.(lrat).*day)
-fig</code></pre><img src="b9b2549b.png" alt="Example block output"/><p>Interactive visualization of the 3D results is also possible if GLMakie is loaded:</p><pre><code class="language-julia hljs">plot_reservoir(model, states, key = :Saturations, step = 3)</code></pre><img src="69d87912.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« JutulDarcy.jl</a><a class="docs-footer-nextpage" href="../../examples/two_phase_gravity_segregation/">Gravity segregation »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.3.0 on <span class="colophon-date" title="Friday 12 April 2024 12:18">Friday 12 April 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+fig</code></pre><img src="e378873f.png" alt="Example block output"/><p>Interactive visualization of the 3D results is also possible if GLMakie is loaded:</p><pre><code class="language-julia hljs">plot_reservoir(model, states, key = :Saturations, step = 3)</code></pre><img src="7defeb3d.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« JutulDarcy.jl</a><a class="docs-footer-nextpage" href="../../examples/two_phase_gravity_segregation/">Gravity segregation »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.3.0 on <span class="colophon-date" title="Friday 12 April 2024 13:18">Friday 12 April 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
