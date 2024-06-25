@@ -56,7 +56,7 @@ model</code></pre><pre class="documenter-example-output"><code class="nohighligh
        ∈ MultiSegmentWell [Producer] (2 nodes, 1 segments, 1 perforations)
     4) Facility (2x2)
        JutulDarcy.PredictionMode()
-       ∈ WellGroup([:Injector, :Producer], true)
+       ∈ WellGroup([:Injector, :Producer], true, true)
 
   cross_terms:
     1) Injector &lt;-&gt; Reservoir (Eq: mass_conservation)
@@ -194,7 +194,7 @@ forces = setup_reservoir_forces(model, control = controls)</code></pre><h3 id="S
   extra
      Dict{Any, Any} with keys :simulator, :config
 
-  Completed at Jun. 05 2024 14:06 after 5 seconds, 373 milliseconds, 95.47 microseconds.</code></pre><p>We can interactively look at the well results in the command line:</p><pre><code class="language-julia hljs">wd(:Producer)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr1">Legend</span>
+  Completed at Jun. 25 2024 17:06 after 4 seconds, 516 milliseconds, 419.5 microseconds.</code></pre><p>We can interactively look at the well results in the command line:</p><pre><code class="language-julia hljs">wd(:Producer)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr1">Legend</span>
 ┌──────────────────┬──────────────────────────────────────────┬──────┬─────────────────────────┐
 │<span class="sgr1"> Label            </span>│<span class="sgr1"> Description                              </span>│<span class="sgr1"> Unit </span>│<span class="sgr1"> Type of quantity        </span>│
 ├──────────────────┼──────────────────────────────────────────┼──────┼─────────────────────────┤
@@ -213,31 +213,31 @@ forces = setup_reservoir_forces(model, control = controls)</code></pre><h3 id="S
 │<span class="sgr1">   time </span>│<span class="sgr1"> Liquid_mass_rate </span>│<span class="sgr1"> Vapor_mass_rate </span>│<span class="sgr1">   bhp </span>│<span class="sgr1"> control </span>│<span class="sgr1">         grat </span>│<span class="sgr1">        lrat </span>│<span class="sgr1"> mass_rate </span>│<span class="sgr1">        orat </span>│<span class="sgr1">       rate </span>│
 │<span class="sgr90">   days </span>│<span class="sgr90">             kg/s </span>│<span class="sgr90">            kg/s </span>│<span class="sgr90">    Pa </span>│<span class="sgr90">       - </span>│<span class="sgr90">         m³/s </span>│<span class="sgr90">        m³/s </span>│<span class="sgr90">      kg/s </span>│<span class="sgr90">        m³/s </span>│<span class="sgr90">       m³/s </span>│
 ├────────┼──────────────────┼─────────────────┼───────┼─────────┼──────────────┼─────────────┼───────────┼─────────────┼────────────┤
-│  365.0 │         -37.5295 │    -1.42248e-10 │ 1.0e7 │     bhp │ -1.42248e-12 │  -0.0375295 │  -37.5295 │  -0.0375295 │ -0.0375295 │
-│  730.0 │         -37.5399 │     -2.00231e-7 │ 1.0e7 │     bhp │  -2.00231e-9 │  -0.0375399 │  -37.5399 │  -0.0375399 │ -0.0375399 │
-│ 1095.0 │         -37.5458 │     -2.01007e-5 │ 1.0e7 │     bhp │  -2.01007e-7 │  -0.0375458 │  -37.5458 │  -0.0375458 │  -0.037546 │
-│ 1460.0 │         -37.5402 │     -0.00109328 │ 1.0e7 │     bhp │  -1.09328e-5 │  -0.0375402 │  -37.5413 │  -0.0375402 │ -0.0375512 │
-│ 1825.0 │         -37.4433 │      -0.0112799 │ 1.0e7 │     bhp │ -0.000112799 │  -0.0374433 │  -37.4546 │  -0.0374433 │ -0.0375561 │
-│ 2190.0 │         -36.9542 │      -0.0611419 │ 1.0e7 │     bhp │ -0.000611419 │  -0.0369542 │  -37.0154 │  -0.0369542 │ -0.0375656 │
-│ 2555.0 │         -35.5944 │       -0.199089 │ 1.0e7 │     bhp │  -0.00199089 │  -0.0355944 │  -35.7935 │  -0.0355944 │ -0.0375853 │
-│ 2920.0 │         -33.5086 │       -0.410421 │ 1.0e7 │     bhp │  -0.00410421 │  -0.0335086 │  -33.9191 │  -0.0335086 │ -0.0376129 │
-│ 3285.0 │         -31.2535 │       -0.638947 │ 1.0e7 │     bhp │  -0.00638947 │  -0.0312535 │  -31.8924 │  -0.0312535 │ -0.0376429 │
-│ 3650.0 │         -28.6501 │       -0.902701 │ 1.0e7 │     bhp │  -0.00902701 │  -0.0286501 │  -29.5528 │  -0.0286501 │ -0.0376771 │
-│ 4015.0 │          -26.178 │        -1.15323 │ 1.0e7 │     bhp │   -0.0115323 │   -0.026178 │  -27.3313 │   -0.026178 │ -0.0377103 │
-│ 4380.0 │         -23.9736 │        -1.37664 │ 1.0e7 │     bhp │   -0.0137664 │  -0.0239736 │  -25.3503 │  -0.0239736 │   -0.03774 │
-│ 4745.0 │         -21.7502 │        -1.60212 │ 1.0e7 │     bhp │   -0.0160212 │  -0.0217502 │  -23.3523 │  -0.0217502 │ -0.0377714 │
-│ 5110.0 │          -19.927 │        -1.78683 │ 1.0e7 │     bhp │   -0.0178683 │   -0.019927 │  -21.7139 │   -0.019927 │ -0.0377954 │
-│ 5475.0 │         -18.0466 │        -1.97753 │ 1.0e7 │     bhp │   -0.0197753 │  -0.0180466 │  -20.0241 │  -0.0180466 │ -0.0378219 │
-│ 5840.0 │         -16.5412 │        -2.12988 │ 1.0e7 │     bhp │   -0.0212988 │  -0.0165412 │  -18.6711 │  -0.0165412 │   -0.03784 │
-│ 6205.0 │         -15.0127 │        -2.28501 │ 1.0e7 │     bhp │   -0.0228501 │  -0.0150127 │  -17.2977 │  -0.0150127 │ -0.0378627 │
-│ 6570.0 │         -13.6246 │        -2.42567 │ 1.0e7 │     bhp │   -0.0242567 │  -0.0136246 │  -16.0503 │  -0.0136246 │ -0.0378813 │
-│ 6935.0 │         -12.5558 │        -2.53383 │ 1.0e7 │     bhp │   -0.0253383 │  -0.0125558 │  -15.0897 │  -0.0125558 │ -0.0378941 │
-│ 7300.0 │         -11.2948 │        -2.66189 │ 1.0e7 │     bhp │   -0.0266189 │  -0.0112948 │  -13.9567 │  -0.0112948 │ -0.0379136 │
-│ 7665.0 │         -10.1733 │        -2.77544 │ 1.0e7 │     bhp │   -0.0277544 │  -0.0101733 │  -12.9488 │  -0.0101733 │ -0.0379277 │
-│ 8030.0 │         -9.37581 │        -2.85609 │ 1.0e7 │     bhp │   -0.0285609 │ -0.00937581 │  -12.2319 │ -0.00937581 │ -0.0379367 │
-│ 8395.0 │         -8.53848 │        -2.94103 │ 1.0e7 │     bhp │   -0.0294103 │ -0.00853848 │  -11.4795 │ -0.00853848 │ -0.0379487 │
-│ 8760.0 │         -7.52457 │        -3.04398 │ 1.0e7 │     bhp │   -0.0304398 │ -0.00752457 │  -10.5686 │ -0.00752457 │ -0.0379644 │
-│ 9125.0 │         -6.69682 │         -3.1277 │ 1.0e7 │     bhp │    -0.031277 │ -0.00669682 │  -9.82452 │ -0.00669682 │ -0.0379738 │
+│  365.0 │         -37.5295 │    -5.31934e-12 │ 1.0e7 │     bhp │ -5.31934e-14 │  -0.0375295 │  -37.5295 │  -0.0375295 │ -0.0375295 │
+│  730.0 │         -37.5398 │      -1.8011e-8 │ 1.0e7 │     bhp │  -1.8011e-10 │  -0.0375398 │  -37.5398 │  -0.0375398 │ -0.0375398 │
+│ 1095.0 │         -37.5463 │     -8.74826e-6 │ 1.0e7 │     bhp │  -8.74826e-8 │  -0.0375463 │  -37.5463 │  -0.0375463 │ -0.0375464 │
+│ 1460.0 │         -37.5472 │    -0.000357476 │ 1.0e7 │     bhp │  -3.57476e-6 │  -0.0375472 │  -37.5475 │  -0.0375472 │ -0.0375508 │
+│ 1825.0 │         -37.5023 │     -0.00529783 │ 1.0e7 │     bhp │  -5.29783e-5 │  -0.0375023 │  -37.5076 │  -0.0375023 │ -0.0375553 │
+│ 2190.0 │          -37.084 │      -0.0480336 │ 1.0e7 │     bhp │ -0.000480336 │   -0.037084 │   -37.132 │   -0.037084 │ -0.0375643 │
+│ 2555.0 │         -35.7654 │       -0.181791 │ 1.0e7 │     bhp │  -0.00181791 │  -0.0357654 │  -35.9472 │  -0.0357654 │ -0.0375833 │
+│ 2920.0 │         -33.6296 │       -0.398191 │ 1.0e7 │     bhp │  -0.00398191 │  -0.0336296 │  -34.0278 │  -0.0336296 │ -0.0376115 │
+│ 3285.0 │         -31.3232 │       -0.631901 │ 1.0e7 │     bhp │  -0.00631901 │  -0.0313232 │  -31.9551 │  -0.0313232 │ -0.0376422 │
+│ 3650.0 │         -28.6794 │       -0.899759 │ 1.0e7 │     bhp │  -0.00899759 │  -0.0286794 │  -29.5791 │  -0.0286794 │  -0.037677 │
+│ 4015.0 │         -26.1839 │        -1.15264 │ 1.0e7 │     bhp │   -0.0115264 │  -0.0261839 │  -27.3365 │  -0.0261839 │ -0.0377103 │
+│ 4380.0 │         -23.9605 │        -1.37797 │ 1.0e7 │     bhp │   -0.0137797 │  -0.0239605 │  -25.3385 │  -0.0239605 │ -0.0377403 │
+│ 4745.0 │         -21.7266 │        -1.60451 │ 1.0e7 │     bhp │   -0.0160451 │  -0.0217266 │  -23.3312 │  -0.0217266 │ -0.0377718 │
+│ 5110.0 │         -19.8976 │        -1.78983 │ 1.0e7 │     bhp │   -0.0178983 │  -0.0198976 │  -21.6874 │  -0.0198976 │ -0.0377958 │
+│ 5475.0 │         -18.0132 │        -1.98091 │ 1.0e7 │     bhp │   -0.0198091 │  -0.0180132 │  -19.9941 │  -0.0180132 │ -0.0378223 │
+│ 5840.0 │           -16.51 │        -2.13304 │ 1.0e7 │     bhp │   -0.0213304 │    -0.01651 │  -18.6431 │    -0.01651 │ -0.0378404 │
+│ 6205.0 │         -14.9744 │         -2.2889 │ 1.0e7 │     bhp │    -0.022889 │  -0.0149744 │  -17.2633 │  -0.0149744 │ -0.0378633 │
+│ 6570.0 │          -13.596 │        -2.42856 │ 1.0e7 │     bhp │   -0.0242856 │   -0.013596 │  -16.0246 │   -0.013596 │ -0.0378816 │
+│ 6935.0 │         -12.5244 │        -2.53702 │ 1.0e7 │     bhp │   -0.0253702 │  -0.0125244 │  -15.0614 │  -0.0125244 │ -0.0378946 │
+│ 7300.0 │         -11.2587 │        -2.66554 │ 1.0e7 │     bhp │   -0.0266554 │  -0.0112587 │  -13.9243 │  -0.0112587 │ -0.0379142 │
+│ 7665.0 │         -10.1473 │        -2.77806 │ 1.0e7 │     bhp │   -0.0277806 │  -0.0101473 │  -12.9254 │  -0.0101473 │  -0.037928 │
+│ 8030.0 │         -9.35292 │        -2.85841 │ 1.0e7 │     bhp │   -0.0285841 │ -0.00935292 │  -12.2113 │ -0.00935292 │  -0.037937 │
+│ 8395.0 │         -8.51068 │        -2.94384 │ 1.0e7 │     bhp │   -0.0294384 │ -0.00851068 │  -11.4545 │ -0.00851068 │ -0.0379491 │
+│ 8760.0 │         -7.49353 │        -3.04713 │ 1.0e7 │     bhp │   -0.0304713 │ -0.00749353 │  -10.5407 │ -0.00749353 │ -0.0379648 │
+│ 9125.0 │         -6.67723 │        -3.12968 │ 1.0e7 │     bhp │   -0.0312968 │ -0.00667723 │   -9.8069 │ -0.00667723 │  -0.037974 │
 └────────┴──────────────────┴─────────────────┴───────┴─────────┴──────────────┴─────────────┴───────────┴─────────────┴────────────┘</code></pre><p>Let us look at the pressure evolution in the injector:</p><pre><code class="language-julia hljs">wd(:Injector, :bhp)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr1">Legend</span>
 ┌───────┬──────────────────────┬──────┬──────────────────┐
 │<span class="sgr1"> Label </span>│<span class="sgr1"> Description          </span>│<span class="sgr1"> Unit </span>│<span class="sgr1"> Type of quantity </span>│
@@ -251,29 +251,29 @@ forces = setup_reservoir_forces(model, control = controls)</code></pre><h3 id="S
 ├────────┼───────────┤
 │  365.0 │ 2.67554e7 │
 │  730.0 │ 2.67591e7 │
-│ 1095.0 │ 2.67612e7 │
-│ 1460.0 │  2.6763e7 │
-│ 1825.0 │ 2.67643e7 │
+│ 1095.0 │ 2.67613e7 │
+│ 1460.0 │ 2.67628e7 │
+│ 1825.0 │ 2.67642e7 │
 │ 2190.0 │ 2.67659e7 │
-│ 2555.0 │ 2.67681e7 │
-│ 2920.0 │ 2.67704e7 │
-│ 3285.0 │ 2.67707e7 │
-│ 3650.0 │ 2.67676e7 │
+│ 2555.0 │  2.6768e7 │
+│ 2920.0 │ 2.67703e7 │
+│ 3285.0 │ 2.67708e7 │
+│ 3650.0 │ 2.67677e7 │
 │ 4015.0 │ 2.67636e7 │
 │ 4380.0 │ 2.67565e7 │
-│ 4745.0 │ 2.67458e7 │
-│ 5110.0 │ 2.67347e7 │
-│ 5475.0 │ 2.67216e7 │
-│ 5840.0 │ 2.67098e7 │
-│ 6205.0 │ 2.66969e7 │
-│ 6570.0 │ 2.66829e7 │
-│ 6935.0 │ 2.66704e7 │
-│ 7300.0 │ 2.66557e7 │
-│ 7665.0 │  2.6641e7 │
-│ 8030.0 │ 2.66297e7 │
-│ 8395.0 │ 2.66169e7 │
-│ 8760.0 │ 2.66013e7 │
-│ 9125.0 │ 2.65867e7 │
+│ 4745.0 │ 2.67457e7 │
+│ 5110.0 │ 2.67346e7 │
+│ 5475.0 │ 2.67214e7 │
+│ 5840.0 │ 2.67096e7 │
+│ 6205.0 │ 2.66966e7 │
+│ 6570.0 │ 2.66825e7 │
+│ 6935.0 │ 2.66701e7 │
+│ 7300.0 │ 2.66552e7 │
+│ 7665.0 │ 2.66406e7 │
+│ 8030.0 │ 2.66293e7 │
+│ 8395.0 │ 2.66164e7 │
+│ 8760.0 │ 2.66008e7 │
+│ 9125.0 │ 2.65864e7 │
 └────────┴───────────┘</code></pre><p>If we have a plotting package available, we can visualize the results too:</p><pre><code class="language-julia hljs">using GLMakie
 grat = wd[:Producer, :grat]
 lrat = wd[:Producer, :lrat]
@@ -290,4 +290,4 @@ ax = Axis(fig[1, 2],
     ylabel = &quot;Production rate / m³/day&quot;)
 lines!(ax, t/day, abs.(grat).*day)
 lines!(ax, t/day, abs.(lrat).*day)
-fig</code></pre><img src="e378873f.png" alt="Example block output"/><p>Interactive visualization of the 3D results is also possible if GLMakie is loaded:</p><pre><code class="language-julia hljs">plot_reservoir(model, states, key = :Saturations, step = 3)</code></pre><img src="b7e947aa.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« JutulDarcy.jl</a><a class="docs-footer-nextpage" href="../../examples/two_phase_gravity_segregation/">Gravity segregation »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Wednesday 5 June 2024 14:26">Wednesday 5 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+fig</code></pre><img src="6b9ed0b4.png" alt="Example block output"/><p>Interactive visualization of the 3D results is also possible if GLMakie is loaded:</p><pre><code class="language-julia hljs">plot_reservoir(model, states, key = :Saturations, step = 3)</code></pre><img src="0c888eae.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« JutulDarcy.jl</a><a class="docs-footer-nextpage" href="../../examples/two_phase_gravity_segregation/">Gravity segregation »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Tuesday 25 June 2024 17:08">Tuesday 25 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

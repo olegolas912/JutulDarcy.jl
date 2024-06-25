@@ -52,7 +52,7 @@ model</code></pre><pre class="documenter-example-output"><code class="nohighligh
        ∈ MultiSegmentWell [Producer] (5 nodes, 4 segments, 4 perforations)
     4) Facility (2x2)
        JutulDarcy.PredictionMode()
-       ∈ WellGroup([:Injector, :Producer], true)
+       ∈ WellGroup([:Injector, :Producer], true, true)
 
   cross_terms:
     1) Injector &lt;-&gt; Reservoir (Eq: mass_conservation)
@@ -188,7 +188,7 @@ controls[:Producer] = P_ctrl
   extra
      Dict{Any, Any} with keys :simulator, :config
 
-  Completed at Jun. 05 2024 14:06 after 343 milliseconds, 546 microseconds, 550 nanoseconds.</code></pre><h3 id="Unpacking-the-result"><a class="docs-heading-anchor" href="#Unpacking-the-result">Unpacking the result</a><a id="Unpacking-the-result-1"></a><a class="docs-heading-anchor-permalink" href="#Unpacking-the-result" title="Permalink"></a></h3><p>The result contains a lot of data. This can be unpacked to get the most typical desired outputs: Well responses, reservoir states and the time they correspond to.</p><pre><code class="language-julia hljs">wd, states, t = result</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">ReservoirSimResult with 60 entries:
+  Completed at Jun. 25 2024 17:06 after 221 milliseconds, 947 microseconds, 631 nanoseconds.</code></pre><h3 id="Unpacking-the-result"><a class="docs-heading-anchor" href="#Unpacking-the-result">Unpacking the result</a><a id="Unpacking-the-result-1"></a><a class="docs-heading-anchor-permalink" href="#Unpacking-the-result" title="Permalink"></a></h3><p>The result contains a lot of data. This can be unpacked to get the most typical desired outputs: Well responses, reservoir states and the time they correspond to.</p><pre><code class="language-julia hljs">wd, states, t = result</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">ReservoirSimResult with 60 entries:
 
   wells (2 present):
     :Producer
@@ -218,47 +218,47 @@ controls[:Producer] = P_ctrl
   extra
      Dict{Any, Any} with keys :simulator, :config
 
-  Completed at Jun. 05 2024 14:06 after 343 milliseconds, 546 microseconds, 550 nanoseconds.</code></pre><p>We could in fact equally well have written <code>wd, states, t = simulate_reservoir(...)</code> to arrive at the same result.</p><h2 id="Plot-the-producer-responses"><a class="docs-heading-anchor" href="#Plot-the-producer-responses">Plot the producer responses</a><a id="Plot-the-producer-responses-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-the-producer-responses" title="Permalink"></a></h2><p>We load a plotting package to plot the wells.</p><pre><code class="language-julia hljs">using GLMakie</code></pre><h2 id="Plot-the-surface-rates-at-the-producer"><a class="docs-heading-anchor" href="#Plot-the-surface-rates-at-the-producer">Plot the surface rates at the producer</a><a id="Plot-the-surface-rates-at-the-producer-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-the-surface-rates-at-the-producer" title="Permalink"></a></h2><p>We observe that the total rate does not vary much, but the composition changes from liquid to gas as the front propagate through the domain and hits the producer well. Gas rates</p><pre><code class="language-julia hljs">qg = wd[:Producer][:grat]</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">60-element Vector{Float64}:
- -1.0163779209114585e-9
- -8.162174764840204e-8
- -1.8958709062477491e-6
- -9.115680395365967e-6
- -2.869514427168637e-5
- -7.152825264968353e-5
- -0.00015274602491718305
- -0.0002915733316666699
- -0.0005106751095575449
- -0.0008350188856556208
+  Completed at Jun. 25 2024 17:06 after 221 milliseconds, 947 microseconds, 631 nanoseconds.</code></pre><p>We could in fact equally well have written <code>wd, states, t = simulate_reservoir(...)</code> to arrive at the same result.</p><h2 id="Plot-the-producer-responses"><a class="docs-heading-anchor" href="#Plot-the-producer-responses">Plot the producer responses</a><a id="Plot-the-producer-responses-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-the-producer-responses" title="Permalink"></a></h2><p>We load a plotting package to plot the wells.</p><pre><code class="language-julia hljs">using GLMakie</code></pre><h2 id="Plot-the-surface-rates-at-the-producer"><a class="docs-heading-anchor" href="#Plot-the-surface-rates-at-the-producer">Plot the surface rates at the producer</a><a id="Plot-the-surface-rates-at-the-producer-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-the-surface-rates-at-the-producer" title="Permalink"></a></h2><p>We observe that the total rate does not vary much, but the composition changes from liquid to gas as the front propagate through the domain and hits the producer well. Gas rates</p><pre><code class="language-julia hljs">qg = wd[:Producer][:grat]</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">60-element Vector{Float64}:
+ -1.0164080678796665e-9
+ -8.162192010010204e-8
+ -7.540129599209253e-7
+ -6.270934198113077e-6
+ -2.3068182472000183e-5
+ -6.188808330789257e-5
+ -0.00013782005380547576
+ -0.0002701536910210888
+ -0.00048172159149887376
+ -0.0007977396624902871
   ⋮
- -0.09126938083933399
- -0.0933146680204109
- -0.0954273454252981
- -0.09759520976425061
- -0.0998195094255487
- -0.10216128280690287
- -0.10466900419009653
- -0.10729252317418313
- -0.1100664259037523</code></pre><p>Total rate</p><pre><code class="language-julia hljs">qt = wd[:Producer][:rate]</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">60-element Vector{Float64}:
- -0.18673225759133613
- -0.1869175714788643
- -0.18710028130099224
- -0.1872438425247608
- -0.18735764440367642
- -0.18744512257179677
- -0.18751612037035822
- -0.18758218192742593
- -0.1876526639461378
- -0.1877233732149669
+ -0.09129017513075814
+ -0.09333743634762323
+ -0.09545176694476369
+ -0.09762094593571057
+ -0.09984678656804769
+ -0.10219151657283594
+ -0.10470127441558583
+ -0.10732728082780806
+ -0.11010415855196835</code></pre><p>Total rate</p><pre><code class="language-julia hljs">qt = wd[:Producer][:rate]</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">60-element Vector{Float64}:
+ -0.1867323864217968
+ -0.18691761855483305
+ -0.1871043733461036
+ -0.18724909468675607
+ -0.18735949897639664
+ -0.18744487120636108
+ -0.1875169163854738
+ -0.1875824662276686
+ -0.18765274282689645
+ -0.18772335437645202
   ⋮
- -0.19062040129171237
- -0.19067578645105132
- -0.19073033656877675
- -0.1907823623657906
- -0.19083195105372117
- -0.19088735852515024
- -0.19095385529529765
- -0.19102082319229122
- -0.19108890718556848</code></pre><p>Compute liquid rate and plot</p><pre><code class="language-julia hljs">ql = qt - qg
+ -0.19062126735315496
+ -0.19067719819855153
+ -0.19073193855282433
+ -0.1907836876211877
+ -0.19083301506697958
+ -0.1908883704581364
+ -0.19095425255829016
+ -0.1910214276949232
+ -0.19108979834434575</code></pre><p>Compute liquid rate and plot</p><pre><code class="language-julia hljs">ql = qt - qg
 x = t/day
 fig = Figure()
 ax = Axis(fig[1, 1], xlabel = &quot;Time (days)&quot;,
@@ -268,10 +268,10 @@ lines!(ax, x, abs.(qg).*day, label = &quot;Gas&quot;)
 lines!(ax, x, abs.(ql).*day, label = &quot;Liquid&quot;)
 lines!(ax, x, abs.(qt).*day, label = &quot;Total&quot;)
 axislegend(position = :rb)
-fig</code></pre><img src="2729daaa.png" alt="Example block output"/><h2 id="Plot-bottom-hole-pressure-of-the-injector"><a class="docs-heading-anchor" href="#Plot-bottom-hole-pressure-of-the-injector">Plot bottom hole pressure of the injector</a><a id="Plot-bottom-hole-pressure-of-the-injector-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-bottom-hole-pressure-of-the-injector" title="Permalink"></a></h2><p>The pressure builds during injection, until the gas breaks through to the other well.</p><pre><code class="language-julia hljs">bh = wd[:Injector][:bhp]
+fig</code></pre><img src="a5a6e1a5.png" alt="Example block output"/><h2 id="Plot-bottom-hole-pressure-of-the-injector"><a class="docs-heading-anchor" href="#Plot-bottom-hole-pressure-of-the-injector">Plot bottom hole pressure of the injector</a><a id="Plot-bottom-hole-pressure-of-the-injector-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-bottom-hole-pressure-of-the-injector" title="Permalink"></a></h2><p>The pressure builds during injection, until the gas breaks through to the other well.</p><pre><code class="language-julia hljs">bh = wd[:Injector][:bhp]
 fig = Figure()
 ax = Axis(fig[1, 1], xlabel = &quot;Time (days)&quot;,
                      ylabel = &quot;Bottom hole pressure (bar)&quot;,
                      title = &quot;Injector bottom hole pressure&quot;)
 lines!(ax, x, bh./bar)
-fig</code></pre><img src="e87e7575.png" alt="Example block output"/><h2 id="Example-on-GitHub"><a class="docs-heading-anchor" href="#Example-on-GitHub">Example on GitHub</a><a id="Example-on-GitHub-1"></a><a class="docs-heading-anchor-permalink" href="#Example-on-GitHub" title="Permalink"></a></h2><p>If you would like to run this example yourself, it can be downloaded from the JutulDarcy.jl GitHub repository <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/main/examples/wells_intro.jl">as a script</a>, or as a <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/gh-pages/dev/examples/wells_intro.ipynb">Notebook</a></p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../two_phase_unstable_gravity/">« Gravity circulation with CPR preconditioner</a><a class="docs-footer-nextpage" href="../co2_sloped/">CO2 injection in saline aquifer »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Wednesday 5 June 2024 14:26">Wednesday 5 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+fig</code></pre><img src="1e7e6483.png" alt="Example block output"/><h2 id="Example-on-GitHub"><a class="docs-heading-anchor" href="#Example-on-GitHub">Example on GitHub</a><a id="Example-on-GitHub-1"></a><a class="docs-heading-anchor-permalink" href="#Example-on-GitHub" title="Permalink"></a></h2><p>If you would like to run this example yourself, it can be downloaded from the JutulDarcy.jl GitHub repository <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/main/examples/wells_intro.jl">as a script</a>, or as a <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/gh-pages/dev/examples/wells_intro.ipynb">Notebook</a></p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../two_phase_unstable_gravity/">« Gravity circulation with CPR preconditioner</a><a class="docs-footer-nextpage" href="../co2_sloped/">CO2 injection in saline aquifer »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Tuesday 25 June 2024 17:08">Tuesday 25 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
