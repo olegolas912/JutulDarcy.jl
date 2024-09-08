@@ -117,7 +117,7 @@ _, states, = simulate_reservoir(state0, model, timesteps, parameters = parameter
 <span class="sgr34"><span class="sgr1">Step 18/20:</span></span> Solving 24 weeks, 2 days to 25 weeks, 5 days, Δt = 1 week, 3 days
 <span class="sgr34"><span class="sgr1">Step 19/20:</span></span> Solving 25 weeks, 5 days to 27 weeks, 1 day, Δt = 1 week, 3 days
 <span class="sgr34"><span class="sgr1">Step 20/20:</span></span> Solving 27 weeks, 1 day to 28 weeks, 4 days, Δt = 1 week, 3 days
-<span class="sgr92"><span class="sgr4"><span class="sgr1">Simulation complete:</span></span></span> Completed 20 report steps in 8 seconds, 273 milliseconds, 843.9 microseconds and 409 iterations.
+<span class="sgr92"><span class="sgr4"><span class="sgr1">Simulation complete:</span></span></span> Completed 20 report steps in 8 seconds, 377 milliseconds, 352.5 microseconds and 409 iterations.
 ╭────────────────┬──────────┬──────────────┬──────────╮
 │<span class="sgr1"> Iteration type </span>│<span class="sgr1"> Avg/step </span>│<span class="sgr1"> Avg/ministep </span>│<span class="sgr1">    Total </span>│
 │<span class="sgr1">                </span>│<span class="sgr90"> 20 steps </span>│<span class="sgr90"> 65 ministeps </span>│<span class="sgr90"> (wasted) </span>│
@@ -131,18 +131,18 @@ _, states, = simulate_reservoir(state0, model, timesteps, parameters = parameter
 │<span class="sgr1"> Timing type   </span>│<span class="sgr1">    Each </span>│<span class="sgr1">   Relative </span>│<span class="sgr1">  Total </span>│
 │<span class="sgr1">               </span>│<span class="sgr90">      ms </span>│<span class="sgr90"> Percentage </span>│<span class="sgr90">      s </span>│
 ├───────────────┼─────────┼────────────┼────────┤
-│<span class="sgr1"> Properties    </span>│  0.6585 │     3.25 % │ 0.2693 │
-│<span class="sgr1"> Equations     </span>│  0.7568 │     4.32 % │ 0.3572 │
-│<span class="sgr1"> Assembly      </span>│  1.0369 │     5.92 % │ 0.4894 │
-│<span class="sgr1"> Linear solve  </span>│  1.6795 │     8.30 % │ 0.6869 │
-│<span class="sgr1"> Linear setup  </span>│  7.1328 │    35.26 % │ 2.9173 │
-│<span class="sgr1"> Precond apply </span>│  0.8079 │    18.34 % │ 1.5172 │
-│<span class="sgr1"> Update        </span>│  0.1885 │     0.93 % │ 0.0771 │
-│<span class="sgr1"> Convergence   </span>│  0.1692 │     0.97 % │ 0.0799 │
-│<span class="sgr1"> Input/Output  </span>│  0.1848 │     0.15 % │ 0.0120 │
-│<span class="sgr1"> Other         </span>│  4.5660 │    22.57 % │ 1.8675 │
+│<span class="sgr1"> Properties    </span>│  0.6665 │     3.25 % │ 0.2726 │
+│<span class="sgr1"> Equations     </span>│  0.7248 │     4.08 % │ 0.3421 │
+│<span class="sgr1"> Assembly      </span>│  1.0594 │     5.97 % │ 0.5000 │
+│<span class="sgr1"> Linear solve  </span>│  1.6749 │     8.18 % │ 0.6850 │
+│<span class="sgr1"> Linear setup  </span>│  7.4047 │    36.15 % │ 3.0285 │
+│<span class="sgr1"> Precond apply </span>│  0.8309 │    18.63 % │ 1.5604 │
+│<span class="sgr1"> Update        </span>│  0.1856 │     0.91 % │ 0.0759 │
+│<span class="sgr1"> Convergence   </span>│  0.1754 │     0.99 % │ 0.0828 │
+│<span class="sgr1"> Input/Output  </span>│  0.8374 │     0.65 % │ 0.0544 │
+│<span class="sgr1"> Other         </span>│  4.3410 │    21.19 % │ 1.7755 │
 ├───────────────┼─────────┼────────────┼────────┤
-│<span class="sgr1"> Total         </span>│ 20.2294 │   100.00 % │ 8.2738 │
+│<span class="sgr1"> Total         </span>│ 20.4825 │   100.00 % │ 8.3774 │
 ╰───────────────┴─────────┴────────────┴────────╯</code></pre><h2 id="Plot-results"><a class="docs-heading-anchor" href="#Plot-results">Plot results</a><a id="Plot-results-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-results" title="Permalink"></a></h2><p>Plot initial saturation</p><pre><code class="language-julia hljs">tmp = reshape(state0[:Reservoir][:Saturations][1, :], nx, nz)
 f = Figure()
 ax = Axis(f[1, 1], title = &quot;Before&quot;)
@@ -152,4 +152,4 @@ hm = heatmap!(ax, tmp, colormap = cmap)</code></pre><pre class="documenter-examp
 ax = Axis(f[1, 3], title = &quot;After&quot;)
 hm = heatmap!(ax, tmp, colormap = cmap)
 Colorbar(f[1, 4], hm)
-f</code></pre><img src="57fddf24.png" alt="Example block output"/><h2 id="Example-on-GitHub"><a class="docs-heading-anchor" href="#Example-on-GitHub">Example on GitHub</a><a id="Example-on-GitHub-1"></a><a class="docs-heading-anchor-permalink" href="#Example-on-GitHub" title="Permalink"></a></h2><p>If you would like to run this example yourself, it can be downloaded from the JutulDarcy.jl GitHub repository <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/main/examples/two_phase_unstable_gravity.jl">as a script</a>, or as a <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/gh-pages/dev/examples/two_phase_unstable_gravity.ipynb">Notebook</a></p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../two_phase_buckley_leverett/">« Two-phase Buckley-Leverett</a><a class="docs-footer-nextpage" href="../wells_intro/">Intro to wells »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Sunday 8 September 2024 08:32">Sunday 8 September 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+f</code></pre><img src="57fddf24.png" alt="Example block output"/><h2 id="Example-on-GitHub"><a class="docs-heading-anchor" href="#Example-on-GitHub">Example on GitHub</a><a id="Example-on-GitHub-1"></a><a class="docs-heading-anchor-permalink" href="#Example-on-GitHub" title="Permalink"></a></h2><p>If you would like to run this example yourself, it can be downloaded from the JutulDarcy.jl GitHub repository <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/main/examples/two_phase_unstable_gravity.jl">as a script</a>, or as a <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/gh-pages/dev/examples/two_phase_unstable_gravity.ipynb">Notebook</a></p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../two_phase_buckley_leverett/">« Two-phase Buckley-Leverett</a><a class="docs-footer-nextpage" href="../wells_intro/">Intro to wells »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Sunday 8 September 2024 18:09">Sunday 8 September 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
