@@ -8,11 +8,11 @@
     <meta name="generator" content="VitePress v1.3.4">
     <link rel="preload stylesheet" href="/JutulDarcy.jl/previews/PR59/assets/style.Ab-UuYvo.css" as="style">
     
-    <script type="module" src="/JutulDarcy.jl/previews/PR59/assets/app.Cd6oKsh8.js"></script>
+    <script type="module" src="/JutulDarcy.jl/previews/PR59/assets/app.DMShZld7.js"></script>
     <link rel="preload" href="/JutulDarcy.jl/previews/PR59/assets/inter-roman-latin.Di8DUHzh.woff2" as="font" type="font/woff2" crossorigin="">
-    <link rel="modulepreload" href="/JutulDarcy.jl/previews/PR59/assets/chunks/theme.DcHhRUE9.js">
+    <link rel="modulepreload" href="/JutulDarcy.jl/previews/PR59/assets/chunks/theme.BgOrjy06.js">
     <link rel="modulepreload" href="/JutulDarcy.jl/previews/PR59/assets/chunks/framework.BXe-E8nS.js">
-    <link rel="modulepreload" href="/JutulDarcy.jl/previews/PR59/assets/examples_intro_sensitivities.md.CXaoRHit.lean.js">
+    <link rel="modulepreload" href="/JutulDarcy.jl/previews/PR59/assets/examples_intro_sensitivities.md.CoQ6UycU.lean.js">
     <script id="check-dark-mode">(()=>{const e=localStorage.getItem("vitepress-theme-appearance")||"auto",a=window.matchMedia("(prefers-color-scheme: dark)").matches;(!e||e==="auto"?a:e==="dark")&&document.documentElement.classList.add("dark")})();</script>
     <script id="check-mac-os">document.documentElement.classList.toggle("mac",/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
   </head>
@@ -140,7 +140,7 @@
 <span class="line"><span></span></span>
 <span class="line"><span>  extra:</span></span>
 <span class="line"><span>    OrderedCollections.OrderedDict{Symbol, Any} with keys: Symbol[]</span></span></code></pre></div><h2 id="Plot-the-initial-variable-graph" tabindex="-1">Plot the initial variable graph <a class="header-anchor" href="#Plot-the-initial-variable-graph" aria-label="Permalink to &quot;Plot the initial variable graph {#Plot-the-initial-variable-graph}&quot;">​</a></h2><p>We plot the default variable graph that describes how the different variables relate to each other. When we add a new parameter and property in the next section, the graph is automatically modified.</p><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">using</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> NetworkLayout, LayeredLayouts, GraphMakie</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Jutul</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">plot_variable_graph</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(rmodel)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/howsgis.C6e-zcDU.jpeg" alt=""></p><h2 id="Change-the-variables" tabindex="-1">Change the variables <a class="header-anchor" href="#Change-the-variables" aria-label="Permalink to &quot;Change the variables {#Change-the-variables}&quot;">​</a></h2><p>We replace the density variable with a more compressible version, and we also define a new relative permeability variable that depends on a new parameter <code>KrExponents</code> to define the exponent of the relative permeability in each cell and phase of the model.</p><p>This is done through several steps:</p><ol><li><p>First, we define the type</p></li><li><p>We define functions that act on that type, in particular the update function that is used to evaluate the new relative permeability during the simulation for named inputs <code>Saturations</code> and <code>KrExponents</code>.</p></li><li><p>We define the <code>KrExponents</code> as a model parameter with a default value, that can subsequently be used by the relative permeability.</p></li></ol><p>Finally we plot the variable graph again to verify that the new relationship has been included in our model.</p><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">c </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> [</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1e-6</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">bar, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1e-4</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">bar]</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Jutul</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">plot_variable_graph</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(rmodel)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/jpyvkha.C6e-zcDU.jpeg" alt=""></p><h2 id="Change-the-variables" tabindex="-1">Change the variables <a class="header-anchor" href="#Change-the-variables" aria-label="Permalink to &quot;Change the variables {#Change-the-variables}&quot;">​</a></h2><p>We replace the density variable with a more compressible version, and we also define a new relative permeability variable that depends on a new parameter <code>KrExponents</code> to define the exponent of the relative permeability in each cell and phase of the model.</p><p>This is done through several steps:</p><ol><li><p>First, we define the type</p></li><li><p>We define functions that act on that type, in particular the update function that is used to evaluate the new relative permeability during the simulation for named inputs <code>Saturations</code> and <code>KrExponents</code>.</p></li><li><p>We define the <code>KrExponents</code> as a model parameter with a default value, that can subsequently be used by the relative permeability.</p></li></ol><p>Finally we plot the variable graph again to verify that the new relationship has been included in our model.</p><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">c </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> [</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1e-6</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">bar, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1e-4</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">bar]</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">density </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> ConstantCompressibilityDensities</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(p_ref </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">bar, density_ref </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> [rhoWS, rhoGS], compressibility </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> c)</span></span>
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">replace_variables!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(rmodel, PhaseMassDensities </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> density);</span></span>
 <span class="line"></span>
@@ -159,7 +159,7 @@
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Jutul</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">default_value</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(model, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">MyKrExp</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 2.0</span></span>
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">set_parameters!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(rmodel, KrExponents </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> MyKrExp</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">())</span></span>
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">replace_variables!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(rmodel, RelativePermeabilities </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> MyKr</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Jutul</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">plot_variable_graph</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(rmodel)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/qxstyzw.DxqjO6oT.jpeg" alt=""></p><h2 id="Set-up-scenario-and-simulate" tabindex="-1">Set up scenario and simulate <a class="header-anchor" href="#Set-up-scenario-and-simulate" aria-label="Permalink to &quot;Set up scenario and simulate {#Set-up-scenario-and-simulate}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">parameters </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> setup_parameters</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(model)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Jutul</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">plot_variable_graph</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(rmodel)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/stdreob.DxqjO6oT.jpeg" alt=""></p><h2 id="Set-up-scenario-and-simulate" tabindex="-1">Set up scenario and simulate <a class="header-anchor" href="#Set-up-scenario-and-simulate" aria-label="Permalink to &quot;Set up scenario and simulate {#Set-up-scenario-and-simulate}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">parameters </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> setup_parameters</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(model)</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">exponents </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> parameters[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:Reservoir</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">][</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:KrExponents</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span></span>
 <span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (cell, rtype) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">in</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> enumerate</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(rock_type)</span></span>
 <span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> rtype </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">==</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span></span>
@@ -195,117 +195,117 @@
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">ws, states </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> result</span></span>
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">ws</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:Producer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:grat</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span></code></pre></div><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span></span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps   3%| |  ETA: 0:04:27[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps   3%| |  ETA: 0:04:21[K</span></span>
 <span class="line"><span>  Progress:  Solving step 2/60 (3.33% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     56 iterations in 8.22 s (146.71 ms each)[K</span></span>
+<span class="line"><span>  Stats:     56 iterations in 8.04 s (143.51 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps   5%| |  ETA: 0:03:04[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps   5%| |  ETA: 0:03:00[K</span></span>
 <span class="line"><span>  Progress:  Solving step 3/60 (5.00% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     73 iterations in 8.53 s (116.79 ms each)[K</span></span>
+<span class="line"><span>  Stats:     73 iterations in 8.34 s (114.20 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps   7%|▏|  ETA: 0:02:19[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps   7%|▏|  ETA: 0:02:15[K</span></span>
 <span class="line"><span>  Progress:  Solving step 4/60 (6.67% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     85 iterations in 8.74 s (102.84 ms each)[K</span></span>
+<span class="line"><span>  Stats:     85 iterations in 8.55 s (100.58 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps   8%|▏|  ETA: 0:01:52[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps   8%|▏|  ETA: 0:01:49[K</span></span>
 <span class="line"><span>  Progress:  Solving step 5/60 (8.33% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     96 iterations in 8.94 s (93.17 ms each)[K</span></span>
+<span class="line"><span>  Stats:     96 iterations in 8.74 s (91.09 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  10%|▏|  ETA: 0:01:33[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  10%|▏|  ETA: 0:01:30[K</span></span>
 <span class="line"><span>  Progress:  Solving step 6/60 (10.00% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     106 iterations in 9.12 s (86.00 ms each)[K</span></span>
+<span class="line"><span>  Stats:     106 iterations in 8.91 s (84.10 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  11%|▏|  ETA: 0:01:20[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  11%|▏|  ETA: 0:01:18[K</span></span>
 <span class="line"><span>  Progress:  Solving step 7/60 (11.67% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     116 iterations in 9.30 s (80.17 ms each)[K</span></span>
+<span class="line"><span>  Stats:     116 iterations in 9.09 s (78.39 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  13%|▏|  ETA: 0:01:09[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  13%|▏|  ETA: 0:01:08[K</span></span>
 <span class="line"><span>  Progress:  Solving step 8/60 (13.33% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     125 iterations in 9.45 s (75.61 ms each)[K</span></span>
+<span class="line"><span>  Stats:     125 iterations in 9.25 s (73.98 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  15%|▏|  ETA: 0:01:01[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  15%|▏|  ETA: 0:01:00[K</span></span>
 <span class="line"><span>  Progress:  Solving step 9/60 (15.00% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     135 iterations in 9.62 s (71.26 ms each)[K</span></span>
+<span class="line"><span>  Stats:     135 iterations in 9.42 s (69.74 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  16%|▏|  ETA: 0:00:55[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  16%|▏|  ETA: 0:00:54[K</span></span>
 <span class="line"><span>  Progress:  Solving step 10/60 (16.67% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     144 iterations in 9.77 s (67.82 ms each)[K</span></span>
+<span class="line"><span>  Stats:     144 iterations in 9.56 s (66.40 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  18%|▏|  ETA: 0:00:50[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  18%|▏|  ETA: 0:00:48[K</span></span>
 <span class="line"><span>  Progress:  Solving step 11/60 (18.33% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     152 iterations in 9.91 s (65.18 ms each)[K</span></span>
+<span class="line"><span>  Stats:     152 iterations in 9.70 s (63.80 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  20%|▎|  ETA: 0:00:45[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  20%|▎|  ETA: 0:00:44[K</span></span>
 <span class="line"><span>  Progress:  Solving step 12/60 (20.00% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     161 iterations in 10.06 s (62.50 ms each)[K</span></span>
+<span class="line"><span>  Stats:     161 iterations in 9.85 s (61.19 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  21%|▎|  ETA: 0:00:42[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  21%|▎|  ETA: 0:00:41[K</span></span>
 <span class="line"><span>  Progress:  Solving step 13/60 (21.67% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     170 iterations in 10.22 s (60.14 ms each)[K</span></span>
+<span class="line"><span>  Stats:     170 iterations in 10.01 s (58.89 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  23%|▎|  ETA: 0:00:38[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  23%|▎|  ETA: 0:00:37[K</span></span>
 <span class="line"><span>  Progress:  Solving step 14/60 (23.33% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     180 iterations in 10.40 s (57.77 ms each)[K</span></span>
+<span class="line"><span>  Stats:     180 iterations in 10.21 s (56.70 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -314,43 +314,43 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  25%|▎|  ETA: 0:00:35[K</span></span>
 <span class="line"><span>  Progress:  Solving step 15/60 (25.00% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     189 iterations in 10.54 s (55.77 ms each)[K</span></span>
+<span class="line"><span>  Stats:     189 iterations in 10.35 s (54.75 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  26%|▎|  ETA: 0:00:33[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  26%|▎|  ETA: 0:00:32[K</span></span>
 <span class="line"><span>  Progress:  Solving step 16/60 (26.67% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     197 iterations in 10.67 s (54.15 ms each)[K</span></span>
+<span class="line"><span>  Stats:     197 iterations in 10.48 s (53.17 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  28%|▎|  ETA: 0:00:31[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  28%|▎|  ETA: 0:00:30[K</span></span>
 <span class="line"><span>  Progress:  Solving step 17/60 (28.33% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     205 iterations in 10.80 s (52.68 ms each)[K</span></span>
+<span class="line"><span>  Stats:     205 iterations in 10.60 s (51.72 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  30%|▎|  ETA: 0:00:29[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  30%|▎|  ETA: 0:00:28[K</span></span>
 <span class="line"><span>  Progress:  Solving step 18/60 (30.00% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     213 iterations in 10.93 s (51.30 ms each)[K</span></span>
+<span class="line"><span>  Stats:     213 iterations in 10.73 s (50.36 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  31%|▎|  ETA: 0:00:27[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  31%|▎|  ETA: 0:00:26[K</span></span>
 <span class="line"><span>  Progress:  Solving step 19/60 (31.67% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     222 iterations in 11.08 s (49.89 ms each)[K</span></span>
+<span class="line"><span>  Stats:     222 iterations in 10.87 s (48.98 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -359,16 +359,16 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  33%|▍|  ETA: 0:00:25[K</span></span>
 <span class="line"><span>  Progress:  Solving step 20/60 (33.33% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     230 iterations in 11.20 s (48.71 ms each)[K</span></span>
+<span class="line"><span>  Stats:     230 iterations in 11.00 s (47.83 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  34%|▍|  ETA: 0:00:24[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  34%|▍|  ETA: 0:00:23[K</span></span>
 <span class="line"><span>  Progress:  Solving step 21/60 (35.00% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     239 iterations in 11.36 s (47.52 ms each)[K</span></span>
+<span class="line"><span>  Stats:     239 iterations in 11.15 s (46.66 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -377,7 +377,7 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  36%|▍|  ETA: 0:00:22[K</span></span>
 <span class="line"><span>  Progress:  Solving step 22/60 (36.67% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     249 iterations in 11.55 s (46.40 ms each)[K</span></span>
+<span class="line"><span>  Stats:     249 iterations in 11.33 s (45.49 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -386,43 +386,43 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  38%|▍|  ETA: 0:00:21[K</span></span>
 <span class="line"><span>  Progress:  Solving step 23/60 (38.33% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     258 iterations in 11.71 s (45.40 ms each)[K</span></span>
+<span class="line"><span>  Stats:     258 iterations in 11.49 s (44.52 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  39%|▍|  ETA: 0:00:20[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  39%|▍|  ETA: 0:00:19[K</span></span>
 <span class="line"><span>  Progress:  Solving step 24/60 (40.00% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     266 iterations in 11.85 s (44.57 ms each)[K</span></span>
+<span class="line"><span>  Stats:     266 iterations in 11.62 s (43.70 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  41%|▍|  ETA: 0:00:19[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  41%|▍|  ETA: 0:00:18[K</span></span>
 <span class="line"><span>  Progress:  Solving step 25/60 (41.67% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     274 iterations in 11.99 s (43.75 ms each)[K</span></span>
+<span class="line"><span>  Stats:     274 iterations in 11.76 s (42.91 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  43%|▍|  ETA: 0:00:18[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  43%|▍|  ETA: 0:00:17[K</span></span>
 <span class="line"><span>  Progress:  Solving step 26/60 (43.33% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     283 iterations in 12.14 s (42.89 ms each)[K</span></span>
+<span class="line"><span>  Stats:     283 iterations in 11.91 s (42.09 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  44%|▌|  ETA: 0:00:17[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  44%|▌|  ETA: 0:00:16[K</span></span>
 <span class="line"><span>  Progress:  Solving step 27/60 (45.00% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     291 iterations in 12.27 s (42.16 ms each)[K</span></span>
+<span class="line"><span>  Stats:     291 iterations in 12.05 s (41.41 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -431,7 +431,7 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  46%|▌|  ETA: 0:00:16[K</span></span>
 <span class="line"><span>  Progress:  Solving step 28/60 (46.67% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     299 iterations in 12.40 s (41.48 ms each)[K</span></span>
+<span class="line"><span>  Stats:     299 iterations in 12.19 s (40.75 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -440,7 +440,7 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  48%|▌|  ETA: 0:00:15[K</span></span>
 <span class="line"><span>  Progress:  Solving step 29/60 (48.33% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     307 iterations in 12.59 s (41.00 ms each)[K</span></span>
+<span class="line"><span>  Stats:     307 iterations in 12.35 s (40.23 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -449,7 +449,7 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  49%|▌|  ETA: 0:00:14[K</span></span>
 <span class="line"><span>  Progress:  Solving step 30/60 (50.00% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     315 iterations in 12.72 s (40.39 ms each)[K</span></span>
+<span class="line"><span>  Stats:     315 iterations in 12.49 s (39.65 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -458,16 +458,16 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  51%|▌|  ETA: 0:00:13[K</span></span>
 <span class="line"><span>  Progress:  Solving step 31/60 (51.67% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     323 iterations in 12.86 s (39.83 ms each)[K</span></span>
+<span class="line"><span>  Stats:     323 iterations in 12.63 s (39.10 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  52%|▌|  ETA: 0:00:13[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  52%|▌|  ETA: 0:00:12[K</span></span>
 <span class="line"><span>  Progress:  Solving step 32/60 (53.33% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     331 iterations in 13.00 s (39.28 ms each)[K</span></span>
+<span class="line"><span>  Stats:     331 iterations in 12.77 s (38.58 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -476,7 +476,7 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  54%|▌|  ETA: 0:00:12[K</span></span>
 <span class="line"><span>  Progress:  Solving step 33/60 (55.00% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     339 iterations in 13.14 s (38.76 ms each)[K</span></span>
+<span class="line"><span>  Stats:     339 iterations in 12.91 s (38.08 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -485,7 +485,7 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  56%|▌|  ETA: 0:00:11[K</span></span>
 <span class="line"><span>  Progress:  Solving step 34/60 (56.67% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     347 iterations in 13.28 s (38.28 ms each)[K</span></span>
+<span class="line"><span>  Stats:     347 iterations in 13.05 s (37.60 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -494,7 +494,7 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  57%|▋|  ETA: 0:00:11[K</span></span>
 <span class="line"><span>  Progress:  Solving step 35/60 (58.33% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     355 iterations in 13.43 s (37.83 ms each)[K</span></span>
+<span class="line"><span>  Stats:     355 iterations in 13.19 s (37.15 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -503,16 +503,16 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  59%|▋|  ETA: 0:00:10[K</span></span>
 <span class="line"><span>  Progress:  Solving step 36/60 (60.00% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     364 iterations in 13.62 s (37.43 ms each)[K</span></span>
+<span class="line"><span>  Stats:     364 iterations in 13.34 s (36.65 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  61%|▋|  ETA: 0:00:10[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  61%|▋|  ETA: 0:00:09[K</span></span>
 <span class="line"><span>  Progress:  Solving step 37/60 (61.67% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     372 iterations in 13.77 s (37.02 ms each)[K</span></span>
+<span class="line"><span>  Stats:     372 iterations in 13.52 s (36.36 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -521,16 +521,16 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  62%|▋|  ETA: 0:00:09[K</span></span>
 <span class="line"><span>  Progress:  Solving step 38/60 (63.33% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     381 iterations in 13.94 s (36.59 ms each)[K</span></span>
+<span class="line"><span>  Stats:     381 iterations in 13.69 s (35.93 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  64%|▋|  ETA: 0:00:09[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  64%|▋|  ETA: 0:00:08[K</span></span>
 <span class="line"><span>  Progress:  Solving step 39/60 (65.00% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     390 iterations in 14.10 s (36.16 ms each)[K</span></span>
+<span class="line"><span>  Stats:     390 iterations in 13.85 s (35.51 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -539,16 +539,16 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  66%|▋|  ETA: 0:00:08[K</span></span>
 <span class="line"><span>  Progress:  Solving step 40/60 (66.67% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     399 iterations in 14.27 s (35.76 ms each)[K</span></span>
+<span class="line"><span>  Stats:     399 iterations in 14.01 s (35.10 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  67%|▋|  ETA: 0:00:08[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  67%|▋|  ETA: 0:00:07[K</span></span>
 <span class="line"><span>  Progress:  Solving step 41/60 (68.33% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     408 iterations in 14.43 s (35.37 ms each)[K</span></span>
+<span class="line"><span>  Stats:     408 iterations in 14.16 s (34.71 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -557,7 +557,7 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  69%|▊|  ETA: 0:00:07[K</span></span>
 <span class="line"><span>  Progress:  Solving step 42/60 (70.00% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     418 iterations in 14.64 s (35.03 ms each)[K</span></span>
+<span class="line"><span>  Stats:     418 iterations in 14.34 s (34.31 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -566,7 +566,7 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  70%|▊|  ETA: 0:00:07[K</span></span>
 <span class="line"><span>  Progress:  Solving step 43/60 (71.67% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     428 iterations in 14.83 s (34.64 ms each)[K</span></span>
+<span class="line"><span>  Stats:     428 iterations in 14.57 s (34.05 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -575,7 +575,7 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  72%|▊|  ETA: 0:00:06[K</span></span>
 <span class="line"><span>  Progress:  Solving step 44/60 (73.33% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     438 iterations in 15.01 s (34.26 ms each)[K</span></span>
+<span class="line"><span>  Stats:     438 iterations in 14.75 s (33.68 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -584,7 +584,7 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  74%|▊|  ETA: 0:00:06[K</span></span>
 <span class="line"><span>  Progress:  Solving step 45/60 (75.00% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     449 iterations in 15.20 s (33.86 ms each)[K</span></span>
+<span class="line"><span>  Stats:     449 iterations in 14.95 s (33.29 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -593,7 +593,7 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  75%|▊|  ETA: 0:00:05[K</span></span>
 <span class="line"><span>  Progress:  Solving step 46/60 (76.67% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     466 iterations in 15.51 s (33.28 ms each)[K</span></span>
+<span class="line"><span>  Stats:     466 iterations in 15.25 s (32.73 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -602,7 +602,7 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  77%|▊|  ETA: 0:00:05[K</span></span>
 <span class="line"><span>  Progress:  Solving step 47/60 (78.33% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     477 iterations in 15.78 s (33.09 ms each)[K</span></span>
+<span class="line"><span>  Stats:     477 iterations in 15.47 s (32.44 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -611,7 +611,7 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  79%|▊|  ETA: 0:00:05[K</span></span>
 <span class="line"><span>  Progress:  Solving step 48/60 (80.00% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     483 iterations in 15.89 s (32.91 ms each)[K</span></span>
+<span class="line"><span>  Stats:     483 iterations in 15.63 s (32.36 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -620,7 +620,7 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  82%|▉|  ETA: 0:00:04[K</span></span>
 <span class="line"><span>  Progress:  Solving step 50/60 (83.33% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     491 iterations in 16.05 s (32.68 ms each)[K</span></span>
+<span class="line"><span>  Stats:     491 iterations in 15.78 s (32.14 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -629,7 +629,7 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  85%|▉|  ETA: 0:00:03[K</span></span>
 <span class="line"><span>  Progress:  Solving step 52/60 (86.67% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     499 iterations in 16.20 s (32.47 ms each)[K</span></span>
+<span class="line"><span>  Stats:     499 iterations in 15.93 s (31.93 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -638,7 +638,7 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  89%|▉|  ETA: 0:00:02[K</span></span>
 <span class="line"><span>  Progress:  Solving step 54/60 (90.00% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     507 iterations in 16.35 s (32.24 ms each)[K</span></span>
+<span class="line"><span>  Stats:     507 iterations in 16.08 s (31.71 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
@@ -647,34 +647,16 @@
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  92%|▉|  ETA: 0:00:02[K</span></span>
 <span class="line"><span>  Progress:  Solving step 56/60 (93.33% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     515 iterations in 16.49 s (32.02 ms each)[K</span></span>
+<span class="line"><span>  Stats:     515 iterations in 16.23 s (31.51 ms each)[K</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span>[A</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>[K[A</span></span>
 <span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  95%|█|  ETA: 0:00:01[K</span></span>
-<span class="line"><span>  Progress:  Solving step 58/60 (96.67% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     523 iterations in 16.63 s (31.81 ms each)[K</span></span>
-<span class="line"><span>[A</span></span>
-<span class="line"><span>[A</span></span>
-<span class="line"><span></span></span>
-<span class="line"><span></span></span>
-<span class="line"><span>[K[A</span></span>
-<span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps  98%|█|  ETA: 0:00:00[K</span></span>
-<span class="line"><span>  Progress:  Solving step 60/60 (100.00% of time interval complete)[K</span></span>
-<span class="line"><span>  Stats:     531 iterations in 16.83 s (31.70 ms each)[K</span></span>
-<span class="line"><span>[A</span></span>
-<span class="line"><span>[A</span></span>
-<span class="line"><span></span></span>
-<span class="line"><span></span></span>
-<span class="line"><span>[K[A</span></span>
-<span class="line"><span>[K[A</span></span>
-<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps 100%|█| Time: 0:00:18[K</span></span>
+<span class="line"><span>Simulating 4 years, 48.43 weeks as 60 report steps 100%|█| Time: 0:00:17[K</span></span>
 <span class="line"><span>  Progress:  Solved step 60/60[K</span></span>
-<span class="line"><span>  Stats:     535 iterations in 16.91 s (31.60 ms each)[K</span></span>
+<span class="line"><span>  Stats:     535 iterations in 16.59 s (31.02 ms each)[K</span></span>
 <span class="line"><span>╭────────────────┬──────────┬───────────────┬──────────╮</span></span>
 <span class="line"><span>│ Iteration type │ Avg/step │  Avg/ministep │    Total │</span></span>
 <span class="line"><span>│                │ 60 steps │ 117 ministeps │ (wasted) │</span></span>
@@ -688,18 +670,18 @@
 <span class="line"><span>│ Timing type   │    Each │   Relative │   Total │</span></span>
 <span class="line"><span>│               │      ms │ Percentage │       s │</span></span>
 <span class="line"><span>├───────────────┼─────────┼────────────┼─────────┤</span></span>
-<span class="line"><span>│ Properties    │  0.6077 │     1.92 % │  0.3251 │</span></span>
-<span class="line"><span>│ Equations     │  5.6689 │    21.86 % │  3.6961 │</span></span>
-<span class="line"><span>│ Assembly      │  3.2866 │    12.67 % │  2.1428 │</span></span>
-<span class="line"><span>│ Linear solve  │  1.2239 │     3.87 % │  0.6548 │</span></span>
-<span class="line"><span>│ Linear setup  │  8.4313 │    26.68 % │  4.5107 │</span></span>
-<span class="line"><span>│ Precond apply │  0.8371 │    18.33 % │  3.0988 │</span></span>
-<span class="line"><span>│ Update        │  0.7116 │     2.25 % │  0.3807 │</span></span>
-<span class="line"><span>│ Convergence   │  1.4003 │     5.40 % │  0.9130 │</span></span>
-<span class="line"><span>│ Input/Output  │  0.4691 │     0.32 % │  0.0549 │</span></span>
-<span class="line"><span>│ Other         │  2.1125 │     6.68 % │  1.1302 │</span></span>
+<span class="line"><span>│ Properties    │  0.5947 │     1.92 % │  0.3182 │</span></span>
+<span class="line"><span>│ Equations     │  5.5625 │    21.85 % │  3.6267 │</span></span>
+<span class="line"><span>│ Assembly      │  3.2478 │    12.76 % │  2.1176 │</span></span>
+<span class="line"><span>│ Linear solve  │  1.1872 │     3.83 % │  0.6351 │</span></span>
+<span class="line"><span>│ Linear setup  │  8.3186 │    26.82 % │  4.4504 │</span></span>
+<span class="line"><span>│ Precond apply │  0.8398 │    18.73 % │  3.1089 │</span></span>
+<span class="line"><span>│ Update        │  0.6565 │     2.12 % │  0.3512 │</span></span>
+<span class="line"><span>│ Convergence   │  1.3384 │     5.26 % │  0.8727 │</span></span>
+<span class="line"><span>│ Input/Output  │  0.1526 │     0.11 % │  0.0179 │</span></span>
+<span class="line"><span>│ Other         │  2.0487 │     6.60 % │  1.0960 │</span></span>
 <span class="line"><span>├───────────────┼─────────┼────────────┼─────────┤</span></span>
-<span class="line"><span>│ Total         │ 31.6021 │   100.00 % │ 16.9071 │</span></span>
+<span class="line"><span>│ Total         │ 31.0180 │   100.00 % │ 16.5947 │</span></span>
 <span class="line"><span>╰───────────────┴─────────┴────────────┴─────────╯</span></span>
 <span class="line"><span>Legend</span></span>
 <span class="line"><span>┌───────┬──────────────────┬──────┬─────────────────────────┐</span></span>
@@ -861,7 +843,7 @@
 <span class="line"><span>    :boundary_areas =&gt; 20400 Vector{Float64}</span></span>
 <span class="line"><span>    :boundary_centroids =&gt; 3×20400 Matrix{Float64}</span></span>
 <span class="line"><span>    :boundary_normals =&gt; 3×20400 Matrix{Float64}</span></span>
-<span class="line"><span>    :boundary_neighbors =&gt; 20400 Vector{Int64}</span></span></code></pre></div><h2 id="Launch-interactive-plotter-for-cell-wise-gradients" tabindex="-1">Launch interactive plotter for cell-wise gradients <a class="header-anchor" href="#Launch-interactive-plotter-for-cell-wise-gradients" aria-label="Permalink to &quot;Launch interactive plotter for cell-wise gradients {#Launch-interactive-plotter-for-cell-wise-gradients}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">plot_reservoir</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(data_domain_with_gradients)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/hzomgka.C2wzUPTx.jpeg" alt=""></p><h2 id="Set-up-plotting-functions" tabindex="-1">Set up plotting functions <a class="header-anchor" href="#Set-up-plotting-functions" aria-label="Permalink to &quot;Set up plotting functions {#Set-up-plotting-functions}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">∂K </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> data_domain_with_gradients[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:permeability</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span></span>
+<span class="line"><span>    :boundary_neighbors =&gt; 20400 Vector{Int64}</span></span></code></pre></div><h2 id="Launch-interactive-plotter-for-cell-wise-gradients" tabindex="-1">Launch interactive plotter for cell-wise gradients <a class="header-anchor" href="#Launch-interactive-plotter-for-cell-wise-gradients" aria-label="Permalink to &quot;Launch interactive plotter for cell-wise gradients {#Launch-interactive-plotter-for-cell-wise-gradients}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">plot_reservoir</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(data_domain_with_gradients)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/ihyorby.C2wzUPTx.jpeg" alt=""></p><h2 id="Set-up-plotting-functions" tabindex="-1">Set up plotting functions <a class="header-anchor" href="#Set-up-plotting-functions" aria-label="Permalink to &quot;Set up plotting functions {#Set-up-plotting-functions}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">∂K </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> data_domain_with_gradients[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:permeability</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">∂ϕ </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> data_domain_with_gradients[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:porosity</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span></span>
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">function</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> get_cscale</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(x)</span></span>
@@ -902,7 +884,7 @@
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">        Colorbar</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(fig[I, J</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">], plt, ticks </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ticks, ticklabelsize </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 25</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, size </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 25</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
 <span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    end</span></span>
 <span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> fig</span></span>
-<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">end</span></span></code></pre></div><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>myplot! (generic function with 1 method)</span></span></code></pre></div><h2 id="Plot-the-permeability" tabindex="-1">Plot the permeability <a class="header-anchor" href="#Plot-the-permeability" aria-label="Permalink to &quot;Plot the permeability {#Plot-the-permeability}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">myplot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Permeability&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, perm</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">./</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">darcy, colorscale </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> log10, ticks </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> [</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.001</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.01</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">])</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/rciyaeu.DEQxvZqt.jpeg" alt=""></p><h2 id="Plot-the-evolution-of-the-gas-saturation" tabindex="-1">Plot the evolution of the gas saturation <a class="header-anchor" href="#Plot-the-evolution-of-the-gas-saturation" aria-label="Permalink to &quot;Plot the evolution of the gas saturation {#Plot-the-evolution-of-the-gas-saturation}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">fig </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> Figure</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(size </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1200</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">400</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">))</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">end</span></span></code></pre></div><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>myplot! (generic function with 1 method)</span></span></code></pre></div><h2 id="Plot-the-permeability" tabindex="-1">Plot the permeability <a class="header-anchor" href="#Plot-the-permeability" aria-label="Permalink to &quot;Plot the permeability {#Plot-the-permeability}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">myplot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Permeability&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, perm</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">./</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">darcy, colorscale </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> log10, ticks </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> [</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.001</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.01</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">])</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/ridripm.DEQxvZqt.jpeg" alt=""></p><h2 id="Plot-the-evolution-of-the-gas-saturation" tabindex="-1">Plot the evolution of the gas saturation <a class="header-anchor" href="#Plot-the-evolution-of-the-gas-saturation" aria-label="Permalink to &quot;Plot the evolution of the gas saturation {#Plot-the-evolution-of-the-gas-saturation}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">fig </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> Figure</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(size </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1200</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">400</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">))</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">sg </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> states[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">25</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">][</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:Saturations</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">][</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, :]</span></span>
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">myplot!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(fig, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Gas saturation&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, sg, colorrange </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">), colorbar </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> false</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">sg </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> states[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">70</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">][</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:Saturations</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">][</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, :]</span></span>
@@ -939,7 +921,7 @@
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    cr </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> [</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1e-7</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1e-7</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span></span>
 <span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">end</span></span></code></pre></div><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>2-element Vector{Float64}:</span></span>
 <span class="line"><span> -1.0e-7</span></span>
-<span class="line"><span>  1.0e-7</span></span></code></pre></div><h2 id="Plot-the-sensitivity-of-the-objective-with-respect-to-x-cell-centroids" tabindex="-1">Plot the sensitivity of the objective with respect to x cell centroids <a class="header-anchor" href="#Plot-the-sensitivity-of-the-objective-with-respect-to-x-cell-centroids" aria-label="Permalink to &quot;Plot the sensitivity of the objective with respect to x cell centroids {#Plot-the-sensitivity-of-the-objective-with-respect-to-x-cell-centroids}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">myplot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;dx_sens&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, ∂x, is_grad </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, colorrange </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cr)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/xjxoaqk.BrKH36Cg.jpeg" alt=""></p><h2 id="Plot-the-sensitivity-of-the-objective-with-respect-to-y-cell-centroids" tabindex="-1">Plot the sensitivity of the objective with respect to y cell centroids <a class="header-anchor" href="#Plot-the-sensitivity-of-the-objective-with-respect-to-y-cell-centroids" aria-label="Permalink to &quot;Plot the sensitivity of the objective with respect to y cell centroids {#Plot-the-sensitivity-of-the-objective-with-respect-to-y-cell-centroids}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">myplot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;dy_sens&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, ∂y, is_grad </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, colorrange </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cr)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/auomhwy.BwMTPBvS.jpeg" alt=""></p><h2 id="Plot-the-sensitivity-of-the-objective-with-respect-to-z-cell-centroids" tabindex="-1">Plot the sensitivity of the objective with respect to z cell centroids <a class="header-anchor" href="#Plot-the-sensitivity-of-the-objective-with-respect-to-z-cell-centroids" aria-label="Permalink to &quot;Plot the sensitivity of the objective with respect to z cell centroids {#Plot-the-sensitivity-of-the-objective-with-respect-to-z-cell-centroids}&quot;">​</a></h2><p>Note: The effect here is primarily coming from gravity.</p><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">myplot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;dz_sens&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, ∂z, is_grad </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, colorrange </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cr)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/noslwhu.mAcOWvD6.jpeg" alt=""></p><h2 id="Plot-the-effect-of-the-new-liquid-kr-exponent-on-the-gas-production" tabindex="-1">Plot the effect of the new liquid kr exponent on the gas production <a class="header-anchor" href="#Plot-the-effect-of-the-new-liquid-kr-exponent-on-the-gas-production" aria-label="Permalink to &quot;Plot the effect of the new liquid kr exponent on the gas production {#Plot-the-effect-of-the-new-liquid-kr-exponent-on-the-gas-production}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> big</span></span>
+<span class="line"><span>  1.0e-7</span></span></code></pre></div><h2 id="Plot-the-sensitivity-of-the-objective-with-respect-to-x-cell-centroids" tabindex="-1">Plot the sensitivity of the objective with respect to x cell centroids <a class="header-anchor" href="#Plot-the-sensitivity-of-the-objective-with-respect-to-x-cell-centroids" aria-label="Permalink to &quot;Plot the sensitivity of the objective with respect to x cell centroids {#Plot-the-sensitivity-of-the-objective-with-respect-to-x-cell-centroids}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">myplot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;dx_sens&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, ∂x, is_grad </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, colorrange </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cr)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/ziscnyp.BrKH36Cg.jpeg" alt=""></p><h2 id="Plot-the-sensitivity-of-the-objective-with-respect-to-y-cell-centroids" tabindex="-1">Plot the sensitivity of the objective with respect to y cell centroids <a class="header-anchor" href="#Plot-the-sensitivity-of-the-objective-with-respect-to-y-cell-centroids" aria-label="Permalink to &quot;Plot the sensitivity of the objective with respect to y cell centroids {#Plot-the-sensitivity-of-the-objective-with-respect-to-y-cell-centroids}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">myplot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;dy_sens&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, ∂y, is_grad </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, colorrange </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cr)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/fnwbimr.BwMTPBvS.jpeg" alt=""></p><h2 id="Plot-the-sensitivity-of-the-objective-with-respect-to-z-cell-centroids" tabindex="-1">Plot the sensitivity of the objective with respect to z cell centroids <a class="header-anchor" href="#Plot-the-sensitivity-of-the-objective-with-respect-to-z-cell-centroids" aria-label="Permalink to &quot;Plot the sensitivity of the objective with respect to z cell centroids {#Plot-the-sensitivity-of-the-objective-with-respect-to-z-cell-centroids}&quot;">​</a></h2><p>Note: The effect here is primarily coming from gravity.</p><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">myplot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;dz_sens&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, ∂z, is_grad </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, colorrange </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cr)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/bnmmcij.mAcOWvD6.jpeg" alt=""></p><h2 id="Plot-the-effect-of-the-new-liquid-kr-exponent-on-the-gas-production" tabindex="-1">Plot the effect of the new liquid kr exponent on the gas production <a class="header-anchor" href="#Plot-the-effect-of-the-new-liquid-kr-exponent-on-the-gas-production" aria-label="Permalink to &quot;Plot the effect of the new liquid kr exponent on the gas production {#Plot-the-effect-of-the-new-liquid-kr-exponent-on-the-gas-production}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> big</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    cr </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> [</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1e-7</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1e-7</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span></span>
 <span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">else</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    cr </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> [</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">8e-6</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">8e-6</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span></span>
@@ -947,17 +929,17 @@
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">kre </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> data_domain_with_gradients[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:KrExponents</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">exp_l </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> kre[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, :]</span></span>
-<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">myplot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;exp_liquid&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, exp_l, is_grad </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, colorrange </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cr)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/jjydyry.NfnSWwgW.jpeg" alt=""></p><h2 id="Plot-the-effect-of-the-new-vapor-kr-exponent-on-the-gas-production" tabindex="-1">Plot the effect of the new vapor kr exponent on the gas production <a class="header-anchor" href="#Plot-the-effect-of-the-new-vapor-kr-exponent-on-the-gas-production" aria-label="Permalink to &quot;Plot the effect of the new vapor kr exponent on the gas production {#Plot-the-effect-of-the-new-vapor-kr-exponent-on-the-gas-production}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">exp_v </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> kre[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, :]</span></span>
-<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">myplot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;exp_vapor&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, exp_v, is_grad </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, colorrange </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cr)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/ycumcnu.DQcJ63fw.jpeg" alt=""></p><h2 id="Plot-the-effect-of-the-liquid-phase-viscosity" tabindex="-1">Plot the effect of the liquid phase viscosity <a class="header-anchor" href="#Plot-the-effect-of-the-liquid-phase-viscosity" aria-label="Permalink to &quot;Plot the effect of the liquid phase viscosity {#Plot-the-effect-of-the-liquid-phase-viscosity}&quot;">​</a></h2><p>Note: The viscosity can in many models be a variable and not a parameter. For this simple model, however, it is treated as a parameter and we obtain sensitivities.</p><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">mu </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> data_domain_with_gradients[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:PhaseViscosities</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">myplot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;exp_liquid&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, exp_l, is_grad </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, colorrange </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cr)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/skxghfl.NfnSWwgW.jpeg" alt=""></p><h2 id="Plot-the-effect-of-the-new-vapor-kr-exponent-on-the-gas-production" tabindex="-1">Plot the effect of the new vapor kr exponent on the gas production <a class="header-anchor" href="#Plot-the-effect-of-the-new-vapor-kr-exponent-on-the-gas-production" aria-label="Permalink to &quot;Plot the effect of the new vapor kr exponent on the gas production {#Plot-the-effect-of-the-new-vapor-kr-exponent-on-the-gas-production}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">exp_v </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> kre[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, :]</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">myplot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;exp_vapor&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, exp_v, is_grad </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, colorrange </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cr)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/xgakncf.DQcJ63fw.jpeg" alt=""></p><h2 id="Plot-the-effect-of-the-liquid-phase-viscosity" tabindex="-1">Plot the effect of the liquid phase viscosity <a class="header-anchor" href="#Plot-the-effect-of-the-liquid-phase-viscosity" aria-label="Permalink to &quot;Plot the effect of the liquid phase viscosity {#Plot-the-effect-of-the-liquid-phase-viscosity}&quot;">​</a></h2><p>Note: The viscosity can in many models be a variable and not a parameter. For this simple model, however, it is treated as a parameter and we obtain sensitivities.</p><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">mu </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> data_domain_with_gradients[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:PhaseViscosities</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span></span>
 <span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> big</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    cr </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> [</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.001</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.001</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span></span>
 <span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">else</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    cr </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> [</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.01</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.01</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span></span>
 <span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">end</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">mu_l </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> mu[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, :]</span></span>
-<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">myplot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;mu_liquid&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, mu_l, is_grad </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, colorrange </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cr)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/zgkprgk.CZ7-Cf4r.jpeg" alt=""></p><h2 id="Plot-the-effect-of-the-liquid-phase-viscosity-2" tabindex="-1">Plot the effect of the liquid phase viscosity <a class="header-anchor" href="#Plot-the-effect-of-the-liquid-phase-viscosity-2" aria-label="Permalink to &quot;Plot the effect of the liquid phase viscosity {#Plot-the-effect-of-the-liquid-phase-viscosity-2}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">mu_v </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> mu[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, :]</span></span>
-<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">myplot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;mu_vapor&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, mu_v, is_grad </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, colorrange </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cr)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/kzktkrq.DwVewtTV.jpeg" alt=""></p><h2 id="Example-on-GitHub" tabindex="-1">Example on GitHub <a class="header-anchor" href="#Example-on-GitHub" aria-label="Permalink to &quot;Example on GitHub {#Example-on-GitHub}&quot;">​</a></h2><p>If you would like to run this example yourself, it can be downloaded from the JutulDarcy.jl GitHub repository <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/main/examples/intro_sensitivities.jl" target="_blank" rel="noreferrer">as a script</a>, or as a <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/gh-pages/dev/examples/intro_sensitivities.ipynb" target="_blank" rel="noreferrer">Notebook</a></p><hr><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl" target="_blank" rel="noreferrer">Literate.jl</a>.</em></p></div></div></main><footer class="VPDocFooter" data-v-83890dd9 data-v-4f9813fa><!--[--><!--]--><div class="edit-info" data-v-4f9813fa><div class="edit-link" data-v-4f9813fa><a class="VPLink link vp-external-link-icon no-icon edit-link-button" href="https://https://github.com/sintefmath/JutulDarcy.jl/edit/main/docs/src/examples/intro_sensitivities.md" target="_blank" rel="noreferrer" data-v-4f9813fa><!--[--><span class="vpi-square-pen edit-link-icon" data-v-4f9813fa></span> Edit this page<!--]--></a></div><!----></div><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-4f9813fa><span class="visually-hidden" id="doc-footer-aria-label" data-v-4f9813fa>Pager</span><div class="pager" data-v-4f9813fa><a class="VPLink link pager-link prev" href="/JutulDarcy.jl/previews/PR59/examples/data_input_file" data-v-4f9813fa><!--[--><span class="desc" data-v-4f9813fa>Previous page</span><span class="title" data-v-4f9813fa>Intro: Simulating Eclipse/DATA input files</span><!--]--></a></div><div class="pager" data-v-4f9813fa><a class="VPLink link pager-link next" href="/JutulDarcy.jl/previews/PR59/examples/co2_brine_2d_vertical" data-v-4f9813fa><!--[--><span class="desc" data-v-4f9813fa>Next page</span><span class="title" data-v-4f9813fa>Intro: Compositional flow</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><footer class="VPFooter has-sidebar" data-v-a9a9e638 data-v-c970a860><div class="container" data-v-c970a860><p class="message" data-v-c970a860>Made with <a href="https://luxdl.github.io/DocumenterVitepress.jl/dev/" target="_blank"><strong>DocumenterVitepress.jl</strong></a><br></p><p class="copyright" data-v-c970a860>© Copyright 2024.</p></div></footer><!--[--><!--]--></div></div>
-    <script>window.__VP_HASH_MAP__=JSON.parse("{\"examples_co2_brine_2d_vertical.md\":\"CqoXOszT\",\"examples_co2_sloped.md\":\"BCtcJ5eI\",\"examples_compositional_5components.md\":\"C9ilmWAg\",\"examples_data_input_file.md\":\"DsdJZubk\",\"examples_five_spot_ensemble.md\":\"Dqra5opB\",\"examples_intro_sensitivities.md\":\"CXaoRHit\",\"examples_optimize_simple_bl.md\":\"CZnUeOjB\",\"examples_two_phase_buckley_leverett.md\":\"DKZhTv7q\",\"examples_two_phase_gravity_segregation.md\":\"BughjKUt\",\"examples_two_phase_unstable_gravity.md\":\"CsQj1Dte\",\"examples_validation_compositional.md\":\"C-sgVmRO\",\"examples_validation_egg.md\":\"B6TlzdmN\",\"examples_validation_mrst.md\":\"CE2vi0T5\",\"examples_validation_norne_nohyst.md\":\"CrENtSvB\",\"examples_validation_olympus_1.md\":\"DFK7O-Xn\",\"examples_validation_spe1.md\":\"CWZ0XV7D\",\"examples_validation_spe9.md\":\"B-BywviQ\",\"examples_wells_intro.md\":\"CMhIStc_\",\"extras_faq.md\":\"Cow8X7jF\",\"extras_refs.md\":\"BFIUnNoG\",\"index.md\":\"BsFlxlqV\",\"man_advanced_compiled.md\":\"kPFiv_rZ\",\"man_advanced_mpi.md\":\"DJPgbiS2\",\"man_basics_forces.md\":\"D2rqvY72\",\"man_basics_input_files.md\":\"BbK4YM8L\",\"man_basics_models.md\":\"Dn3oOPRd\",\"man_basics_parameters.md\":\"CbC8DIPX\",\"man_basics_plotting.md\":\"Jq7Hmz80\",\"man_basics_primary.md\":\"q3nJk8yO\",\"man_basics_secondary.md\":\"bVK3QJDA\",\"man_basics_solution.md\":\"DOLmSnct\",\"man_basics_systems.md\":\"BHF-Zqye\",\"man_basics_wells.md\":\"DDCt1soW\",\"man_highlevel.md\":\"Vf9dgI4_\",\"man_intro.md\":\"CI1b39Z3\",\"notebooks_empty.md\":\"DAHC67u6\",\"ref_jutul.md\":\"BOf_OG5x\"}");window.__VP_SITE_DATA__=JSON.parse("{\"lang\":\"en-US\",\"dir\":\"ltr\",\"title\":\"JutulDarcy.jl\",\"description\":\"Documentation for JutulDarcy.jl\",\"base\":\"/JutulDarcy.jl/previews/PR59/\",\"head\":[],\"router\":{\"prefetchLinks\":true},\"appearance\":true,\"themeConfig\":{\"outline\":\"deep\",\"search\":{\"provider\":\"local\",\"options\":{\"detailedView\":true}},\"nav\":[{\"text\":\"Introduction\",\"collapsed\":false,\"items\":[{\"text\":\"JutulDarcy.jl\",\"link\":\"/index\"},{\"text\":\"Getting started\",\"link\":\"/man/intro\"},{\"text\":\"References\",\"link\":\"/extras/refs\"},{\"text\":\"FAQ\",\"link\":\"/extras/faq\"},{\"text\":\"Jutul functions\",\"link\":\"/ref/jutul\"}]},{\"text\":\"Manual\",\"collapsed\":false,\"items\":[{\"text\":\"High-level API\",\"link\":\"/man/highlevel\"},{\"text\":\"Input formats\",\"link\":\"/man/basics/input_files\"},{\"text\":\"Driving forces\",\"link\":\"/man/basics/forces\"},{\"text\":\"Supported physical systems\",\"link\":\"/man/basics/systems\"},{\"text\":\"Wells and controls\",\"link\":\"/man/basics/wells\"},{\"text\":\"Solving the equations\",\"link\":\"/man/basics/solution\"},{\"text\":\"Primary variables\",\"link\":\"/man/basics/primary\"},{\"text\":\"Secondary variables (properties)\",\"link\":\"/man/basics/secondary\"},{\"text\":\"Parameters\",\"link\":\"/man/basics/parameters\"},{\"text\":\"Plotting and visualization\",\"link\":\"/man/basics/plotting\"}]},{\"text\":\"Examples: Introduction\",\"collapsed\":false,\"items\":[{\"text\":\"Intro: Gravity segregation\",\"link\":\"/examples/two_phase_gravity_segregation\"},{\"text\":\"Intro: Two-phase Buckley-Leverett\",\"link\":\"/examples/two_phase_buckley_leverett\"},{\"text\":\"Intro: Wells\",\"link\":\"/examples/wells_intro\"},{\"text\":\"Intro: Simulating Eclipse/DATA input files\",\"link\":\"/examples/data_input_file\"},{\"text\":\"Intro: Sensitivities in JutulDarcy\",\"link\":\"/examples/intro_sensitivities\"},{\"text\":\"Intro: Compositional flow\",\"link\":\"/examples/co2_brine_2d_vertical\"}]},{\"text\":\"Examples: Usage\",\"collapsed\":false,\"items\":[{\"text\":\"Quarter-five-spot with variation\",\"link\":\"/examples/five_spot_ensemble\"},{\"text\":\"Gravity circulation with CPR preconditioner\",\"link\":\"/examples/two_phase_unstable_gravity\"},{\"text\":\"CO2 injection in saline aquifer\",\"link\":\"/examples/co2_sloped\"},{\"text\":\"Compositional with five components\",\"link\":\"/examples/compositional_5components\"},{\"text\":\"Parameter matching of Buckley-Leverett\",\"link\":\"/examples/optimize_simple_bl\"}]},{\"text\":\"Examples: Validation\",\"collapsed\":false,\"items\":[{\"text\":\"Validation: SPE1\",\"link\":\"/examples/validation_spe1\"},{\"text\":\"Validation: SPE9\",\"link\":\"/examples/validation_spe9\"},{\"text\":\"Validation: Compositional\",\"link\":\"/examples/validation_compositional\"},{\"text\":\"Validation: Egg\",\"link\":\"/examples/validation_egg\"},{\"text\":\"Validation: OLYMPUS 1\",\"link\":\"/examples/validation_olympus_1\"},{\"text\":\"Validation: Norne\",\"link\":\"/examples/validation_norne_nohyst\"},{\"text\":\"Validation: MRST input files\",\"link\":\"/examples/validation_mrst\"}]},{\"text\":\"Advanced usage\",\"collapsed\":false,\"items\":[{\"text\":\"Multi-threading and MPI support\",\"link\":\"/man/advanced/mpi\"},{\"text\":\"Standalone reservoir simulator\",\"link\":\"/man/advanced/compiled\"}]}],\"sidebar\":[{\"text\":\"Introduction\",\"collapsed\":false,\"items\":[{\"text\":\"JutulDarcy.jl\",\"link\":\"/index\"},{\"text\":\"Getting started\",\"link\":\"/man/intro\"},{\"text\":\"References\",\"link\":\"/extras/refs\"},{\"text\":\"FAQ\",\"link\":\"/extras/faq\"},{\"text\":\"Jutul functions\",\"link\":\"/ref/jutul\"}]},{\"text\":\"Manual\",\"collapsed\":false,\"items\":[{\"text\":\"High-level API\",\"link\":\"/man/highlevel\"},{\"text\":\"Input formats\",\"link\":\"/man/basics/input_files\"},{\"text\":\"Driving forces\",\"link\":\"/man/basics/forces\"},{\"text\":\"Supported physical systems\",\"link\":\"/man/basics/systems\"},{\"text\":\"Wells and controls\",\"link\":\"/man/basics/wells\"},{\"text\":\"Solving the equations\",\"link\":\"/man/basics/solution\"},{\"text\":\"Primary variables\",\"link\":\"/man/basics/primary\"},{\"text\":\"Secondary variables (properties)\",\"link\":\"/man/basics/secondary\"},{\"text\":\"Parameters\",\"link\":\"/man/basics/parameters\"},{\"text\":\"Plotting and visualization\",\"link\":\"/man/basics/plotting\"}]},{\"text\":\"Examples: Introduction\",\"collapsed\":false,\"items\":[{\"text\":\"Intro: Gravity segregation\",\"link\":\"/examples/two_phase_gravity_segregation\"},{\"text\":\"Intro: Two-phase Buckley-Leverett\",\"link\":\"/examples/two_phase_buckley_leverett\"},{\"text\":\"Intro: Wells\",\"link\":\"/examples/wells_intro\"},{\"text\":\"Intro: Simulating Eclipse/DATA input files\",\"link\":\"/examples/data_input_file\"},{\"text\":\"Intro: Sensitivities in JutulDarcy\",\"link\":\"/examples/intro_sensitivities\"},{\"text\":\"Intro: Compositional flow\",\"link\":\"/examples/co2_brine_2d_vertical\"}]},{\"text\":\"Examples: Usage\",\"collapsed\":false,\"items\":[{\"text\":\"Quarter-five-spot with variation\",\"link\":\"/examples/five_spot_ensemble\"},{\"text\":\"Gravity circulation with CPR preconditioner\",\"link\":\"/examples/two_phase_unstable_gravity\"},{\"text\":\"CO2 injection in saline aquifer\",\"link\":\"/examples/co2_sloped\"},{\"text\":\"Compositional with five components\",\"link\":\"/examples/compositional_5components\"},{\"text\":\"Parameter matching of Buckley-Leverett\",\"link\":\"/examples/optimize_simple_bl\"}]},{\"text\":\"Examples: Validation\",\"collapsed\":false,\"items\":[{\"text\":\"Validation: SPE1\",\"link\":\"/examples/validation_spe1\"},{\"text\":\"Validation: SPE9\",\"link\":\"/examples/validation_spe9\"},{\"text\":\"Validation: Compositional\",\"link\":\"/examples/validation_compositional\"},{\"text\":\"Validation: Egg\",\"link\":\"/examples/validation_egg\"},{\"text\":\"Validation: OLYMPUS 1\",\"link\":\"/examples/validation_olympus_1\"},{\"text\":\"Validation: Norne\",\"link\":\"/examples/validation_norne_nohyst\"},{\"text\":\"Validation: MRST input files\",\"link\":\"/examples/validation_mrst\"}]},{\"text\":\"Advanced usage\",\"collapsed\":false,\"items\":[{\"text\":\"Multi-threading and MPI support\",\"link\":\"/man/advanced/mpi\"},{\"text\":\"Standalone reservoir simulator\",\"link\":\"/man/advanced/compiled\"}]}],\"editLink\":{\"pattern\":\"https://https://github.com/sintefmath/JutulDarcy.jl/edit/main/docs/src/:path\"},\"socialLinks\":[{\"icon\":\"github\",\"link\":\"https://github.com/sintefmath/JutulDarcy.jl\"}],\"footer\":{\"message\":\"Made with <a href=\\\"https://luxdl.github.io/DocumenterVitepress.jl/dev/\\\" target=\\\"_blank\\\"><strong>DocumenterVitepress.jl</strong></a><br>\",\"copyright\":\"© Copyright 2024.\"}},\"locales\":{},\"scrollOffset\":134,\"cleanUrls\":true}");</script>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">myplot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;mu_liquid&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, mu_l, is_grad </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, colorrange </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cr)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/mxtgqpr.CZ7-Cf4r.jpeg" alt=""></p><h2 id="Plot-the-effect-of-the-liquid-phase-viscosity-2" tabindex="-1">Plot the effect of the liquid phase viscosity <a class="header-anchor" href="#Plot-the-effect-of-the-liquid-phase-viscosity-2" aria-label="Permalink to &quot;Plot the effect of the liquid phase viscosity {#Plot-the-effect-of-the-liquid-phase-viscosity-2}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">mu_v </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> mu[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, :]</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">myplot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;mu_vapor&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, mu_v, is_grad </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, colorrange </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cr)</span></span></code></pre></div><p><img src="/JutulDarcy.jl/previews/PR59/assets/aiwhvbb.DwVewtTV.jpeg" alt=""></p><h2 id="Example-on-GitHub" tabindex="-1">Example on GitHub <a class="header-anchor" href="#Example-on-GitHub" aria-label="Permalink to &quot;Example on GitHub {#Example-on-GitHub}&quot;">​</a></h2><p>If you would like to run this example yourself, it can be downloaded from the JutulDarcy.jl GitHub repository <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/main/examples/intro_sensitivities.jl" target="_blank" rel="noreferrer">as a script</a>, or as a <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/gh-pages/dev/examples/intro_sensitivities.ipynb" target="_blank" rel="noreferrer">Notebook</a></p><hr><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl" target="_blank" rel="noreferrer">Literate.jl</a>.</em></p></div></div></main><footer class="VPDocFooter" data-v-83890dd9 data-v-4f9813fa><!--[--><!--]--><div class="edit-info" data-v-4f9813fa><div class="edit-link" data-v-4f9813fa><a class="VPLink link vp-external-link-icon no-icon edit-link-button" href="https://https://github.com/sintefmath/JutulDarcy.jl/edit/main/docs/src/examples/intro_sensitivities.md" target="_blank" rel="noreferrer" data-v-4f9813fa><!--[--><span class="vpi-square-pen edit-link-icon" data-v-4f9813fa></span> Edit this page<!--]--></a></div><!----></div><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-4f9813fa><span class="visually-hidden" id="doc-footer-aria-label" data-v-4f9813fa>Pager</span><div class="pager" data-v-4f9813fa><a class="VPLink link pager-link prev" href="/JutulDarcy.jl/previews/PR59/examples/data_input_file" data-v-4f9813fa><!--[--><span class="desc" data-v-4f9813fa>Previous page</span><span class="title" data-v-4f9813fa>Intro: Simulating Eclipse/DATA input files</span><!--]--></a></div><div class="pager" data-v-4f9813fa><a class="VPLink link pager-link next" href="/JutulDarcy.jl/previews/PR59/examples/co2_brine_2d_vertical" data-v-4f9813fa><!--[--><span class="desc" data-v-4f9813fa>Next page</span><span class="title" data-v-4f9813fa>Intro: Compositional flow</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><footer class="VPFooter has-sidebar" data-v-a9a9e638 data-v-c970a860><div class="container" data-v-c970a860><p class="message" data-v-c970a860>Made with <a href="https://luxdl.github.io/DocumenterVitepress.jl/dev/" target="_blank"><strong>DocumenterVitepress.jl</strong></a><br></p><p class="copyright" data-v-c970a860>© Copyright 2024.</p></div></footer><!--[--><!--]--></div></div>
+    <script>window.__VP_HASH_MAP__=JSON.parse("{\"examples_co2_brine_2d_vertical.md\":\"BNYX5rth\",\"examples_co2_sloped.md\":\"YK722VIb\",\"examples_compositional_5components.md\":\"Cfdxcoki\",\"examples_data_input_file.md\":\"BU09dUty\",\"examples_five_spot_ensemble.md\":\"DLiJ92RU\",\"examples_intro_sensitivities.md\":\"CoQ6UycU\",\"examples_optimize_simple_bl.md\":\"DitohZkU\",\"examples_two_phase_buckley_leverett.md\":\"tswQ1eNg\",\"examples_two_phase_gravity_segregation.md\":\"BreLNgyo\",\"examples_two_phase_unstable_gravity.md\":\"DDkxzlM1\",\"examples_validation_compositional.md\":\"CWHmVIlf\",\"examples_validation_egg.md\":\"ys4pLGDu\",\"examples_validation_mrst.md\":\"DkhtcX3O\",\"examples_validation_norne_nohyst.md\":\"DYH43N50\",\"examples_validation_olympus_1.md\":\"BcNAQvuX\",\"examples_validation_spe1.md\":\"BEDhFB7t\",\"examples_validation_spe9.md\":\"CsCwImDH\",\"examples_wells_intro.md\":\"XkLJGjtf\",\"extras_faq.md\":\"Cow8X7jF\",\"extras_refs.md\":\"BFIUnNoG\",\"index.md\":\"JOJGs3LB\",\"man_advanced_compiled.md\":\"kPFiv_rZ\",\"man_advanced_mpi.md\":\"B1T5r0An\",\"man_basics_forces.md\":\"D7Z2mlpV\",\"man_basics_input_files.md\":\"DLLgk7wt\",\"man_basics_models.md\":\"Dn3oOPRd\",\"man_basics_parameters.md\":\"id14_a9u\",\"man_basics_plotting.md\":\"C7YL8KGb\",\"man_basics_primary.md\":\"DiX7MVgz\",\"man_basics_secondary.md\":\"isjbUGKe\",\"man_basics_solution.md\":\"Dlom6I8j\",\"man_basics_systems.md\":\"DTqEQLrP\",\"man_basics_wells.md\":\"CjddxxxK\",\"man_highlevel.md\":\"BL2hBY3K\",\"man_intro.md\":\"CaxfD50F\",\"notebooks_empty.md\":\"DAHC67u6\",\"ref_jutul.md\":\"BOf_OG5x\"}");window.__VP_SITE_DATA__=JSON.parse("{\"lang\":\"en-US\",\"dir\":\"ltr\",\"title\":\"JutulDarcy.jl\",\"description\":\"Documentation for JutulDarcy.jl\",\"base\":\"/JutulDarcy.jl/previews/PR59/\",\"head\":[],\"router\":{\"prefetchLinks\":true},\"appearance\":true,\"themeConfig\":{\"outline\":\"deep\",\"search\":{\"provider\":\"local\",\"options\":{\"detailedView\":true}},\"nav\":[{\"text\":\"Introduction\",\"collapsed\":false,\"items\":[{\"text\":\"JutulDarcy.jl\",\"link\":\"/index\"},{\"text\":\"Getting started\",\"link\":\"/man/intro\"},{\"text\":\"References\",\"link\":\"/extras/refs\"},{\"text\":\"FAQ\",\"link\":\"/extras/faq\"},{\"text\":\"Jutul functions\",\"link\":\"/ref/jutul\"}]},{\"text\":\"Manual\",\"collapsed\":false,\"items\":[{\"text\":\"High-level API\",\"link\":\"/man/highlevel\"},{\"text\":\"Input formats\",\"link\":\"/man/basics/input_files\"},{\"text\":\"Driving forces\",\"link\":\"/man/basics/forces\"},{\"text\":\"Supported physical systems\",\"link\":\"/man/basics/systems\"},{\"text\":\"Wells and controls\",\"link\":\"/man/basics/wells\"},{\"text\":\"Solving the equations\",\"link\":\"/man/basics/solution\"},{\"text\":\"Primary variables\",\"link\":\"/man/basics/primary\"},{\"text\":\"Secondary variables (properties)\",\"link\":\"/man/basics/secondary\"},{\"text\":\"Parameters\",\"link\":\"/man/basics/parameters\"},{\"text\":\"Plotting and visualization\",\"link\":\"/man/basics/plotting\"}]},{\"text\":\"Examples: Introduction\",\"collapsed\":false,\"items\":[{\"text\":\"Intro: Gravity segregation\",\"link\":\"/examples/two_phase_gravity_segregation\"},{\"text\":\"Intro: Two-phase Buckley-Leverett\",\"link\":\"/examples/two_phase_buckley_leverett\"},{\"text\":\"Intro: Wells\",\"link\":\"/examples/wells_intro\"},{\"text\":\"Intro: Simulating Eclipse/DATA input files\",\"link\":\"/examples/data_input_file\"},{\"text\":\"Intro: Sensitivities in JutulDarcy\",\"link\":\"/examples/intro_sensitivities\"},{\"text\":\"Intro: Compositional flow\",\"link\":\"/examples/co2_brine_2d_vertical\"}]},{\"text\":\"Examples: Usage\",\"collapsed\":false,\"items\":[{\"text\":\"Quarter-five-spot with variation\",\"link\":\"/examples/five_spot_ensemble\"},{\"text\":\"Gravity circulation with CPR preconditioner\",\"link\":\"/examples/two_phase_unstable_gravity\"},{\"text\":\"CO2 injection in saline aquifer\",\"link\":\"/examples/co2_sloped\"},{\"text\":\"Compositional with five components\",\"link\":\"/examples/compositional_5components\"},{\"text\":\"Parameter matching of Buckley-Leverett\",\"link\":\"/examples/optimize_simple_bl\"}]},{\"text\":\"Examples: Validation\",\"collapsed\":false,\"items\":[{\"text\":\"Validation: SPE1\",\"link\":\"/examples/validation_spe1\"},{\"text\":\"Validation: SPE9\",\"link\":\"/examples/validation_spe9\"},{\"text\":\"Validation: Compositional\",\"link\":\"/examples/validation_compositional\"},{\"text\":\"Validation: Egg\",\"link\":\"/examples/validation_egg\"},{\"text\":\"Validation: OLYMPUS 1\",\"link\":\"/examples/validation_olympus_1\"},{\"text\":\"Validation: Norne\",\"link\":\"/examples/validation_norne_nohyst\"},{\"text\":\"Validation: MRST input files\",\"link\":\"/examples/validation_mrst\"}]},{\"text\":\"Advanced usage\",\"collapsed\":false,\"items\":[{\"text\":\"Multi-threading and MPI support\",\"link\":\"/man/advanced/mpi\"},{\"text\":\"Standalone reservoir simulator\",\"link\":\"/man/advanced/compiled\"}]}],\"sidebar\":[{\"text\":\"Introduction\",\"collapsed\":false,\"items\":[{\"text\":\"JutulDarcy.jl\",\"link\":\"/index\"},{\"text\":\"Getting started\",\"link\":\"/man/intro\"},{\"text\":\"References\",\"link\":\"/extras/refs\"},{\"text\":\"FAQ\",\"link\":\"/extras/faq\"},{\"text\":\"Jutul functions\",\"link\":\"/ref/jutul\"}]},{\"text\":\"Manual\",\"collapsed\":false,\"items\":[{\"text\":\"High-level API\",\"link\":\"/man/highlevel\"},{\"text\":\"Input formats\",\"link\":\"/man/basics/input_files\"},{\"text\":\"Driving forces\",\"link\":\"/man/basics/forces\"},{\"text\":\"Supported physical systems\",\"link\":\"/man/basics/systems\"},{\"text\":\"Wells and controls\",\"link\":\"/man/basics/wells\"},{\"text\":\"Solving the equations\",\"link\":\"/man/basics/solution\"},{\"text\":\"Primary variables\",\"link\":\"/man/basics/primary\"},{\"text\":\"Secondary variables (properties)\",\"link\":\"/man/basics/secondary\"},{\"text\":\"Parameters\",\"link\":\"/man/basics/parameters\"},{\"text\":\"Plotting and visualization\",\"link\":\"/man/basics/plotting\"}]},{\"text\":\"Examples: Introduction\",\"collapsed\":false,\"items\":[{\"text\":\"Intro: Gravity segregation\",\"link\":\"/examples/two_phase_gravity_segregation\"},{\"text\":\"Intro: Two-phase Buckley-Leverett\",\"link\":\"/examples/two_phase_buckley_leverett\"},{\"text\":\"Intro: Wells\",\"link\":\"/examples/wells_intro\"},{\"text\":\"Intro: Simulating Eclipse/DATA input files\",\"link\":\"/examples/data_input_file\"},{\"text\":\"Intro: Sensitivities in JutulDarcy\",\"link\":\"/examples/intro_sensitivities\"},{\"text\":\"Intro: Compositional flow\",\"link\":\"/examples/co2_brine_2d_vertical\"}]},{\"text\":\"Examples: Usage\",\"collapsed\":false,\"items\":[{\"text\":\"Quarter-five-spot with variation\",\"link\":\"/examples/five_spot_ensemble\"},{\"text\":\"Gravity circulation with CPR preconditioner\",\"link\":\"/examples/two_phase_unstable_gravity\"},{\"text\":\"CO2 injection in saline aquifer\",\"link\":\"/examples/co2_sloped\"},{\"text\":\"Compositional with five components\",\"link\":\"/examples/compositional_5components\"},{\"text\":\"Parameter matching of Buckley-Leverett\",\"link\":\"/examples/optimize_simple_bl\"}]},{\"text\":\"Examples: Validation\",\"collapsed\":false,\"items\":[{\"text\":\"Validation: SPE1\",\"link\":\"/examples/validation_spe1\"},{\"text\":\"Validation: SPE9\",\"link\":\"/examples/validation_spe9\"},{\"text\":\"Validation: Compositional\",\"link\":\"/examples/validation_compositional\"},{\"text\":\"Validation: Egg\",\"link\":\"/examples/validation_egg\"},{\"text\":\"Validation: OLYMPUS 1\",\"link\":\"/examples/validation_olympus_1\"},{\"text\":\"Validation: Norne\",\"link\":\"/examples/validation_norne_nohyst\"},{\"text\":\"Validation: MRST input files\",\"link\":\"/examples/validation_mrst\"}]},{\"text\":\"Advanced usage\",\"collapsed\":false,\"items\":[{\"text\":\"Multi-threading and MPI support\",\"link\":\"/man/advanced/mpi\"},{\"text\":\"Standalone reservoir simulator\",\"link\":\"/man/advanced/compiled\"}]}],\"editLink\":{\"pattern\":\"https://https://github.com/sintefmath/JutulDarcy.jl/edit/main/docs/src/:path\"},\"socialLinks\":[{\"icon\":\"github\",\"link\":\"https://github.com/sintefmath/JutulDarcy.jl\"}],\"footer\":{\"message\":\"Made with <a href=\\\"https://luxdl.github.io/DocumenterVitepress.jl/dev/\\\" target=\\\"_blank\\\"><strong>DocumenterVitepress.jl</strong></a><br>\",\"copyright\":\"© Copyright 2024.\"}},\"locales\":{},\"scrollOffset\":134,\"cleanUrls\":true}");</script>
     
   </body>
 </html>
