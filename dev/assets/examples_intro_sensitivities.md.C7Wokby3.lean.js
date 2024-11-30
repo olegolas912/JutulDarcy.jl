@@ -1,0 +1,403 @@
+import{_ as a,c as i,a5 as n,o as p}from"./chunks/framework.BN0c37cb.js";const l="/JutulDarcy.jl/dev/assets/jzvkbgv.C6e-zcDU.jpeg",e="/JutulDarcy.jl/dev/assets/evjfhcu.DxqjO6oT.jpeg",g=JSON.parse('{"title":"Intro to sensitivities in JutulDarcy","description":"","frontmatter":{},"headers":[],"relativePath":"examples/intro_sensitivities.md","filePath":"examples/intro_sensitivities.md","lastUpdated":null}'),t={name:"examples/intro_sensitivities.md"};function h(k,s,r,d,E,c){return p(),i("div",null,s[0]||(s[0]=[n(`<h1 id="Intro-to-sensitivities-in-JutulDarcy" tabindex="-1">Intro to sensitivities in JutulDarcy <a class="header-anchor" href="#Intro-to-sensitivities-in-JutulDarcy" aria-label="Permalink to &quot;Intro to sensitivities in JutulDarcy {#Intro-to-sensitivities-in-JutulDarcy}&quot;">​</a></h1><p>Sensitivites with respect to custom parameters: We demonstrate how to set up a simple conceptual model, add new parameters and variable definitions in the form of a new relative permeability function, and calculate and visualize parameter sensitivities.</p><p>We first set up a quarter-five-spot model where the domain is flooded from left to right. Some cells have lower permeability to impede flow and make the scenario more interesting.</p><p>For more details, see the paper <a href="https://doi.org/10.3997/2214-4609.202437111" target="_blank" rel="noreferrer">JutulDarcy.jl - a Fully Differentiable High-Performance Reservoir Simulator Based on Automatic Differentiation</a>.</p><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">using</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Jutul, JutulDarcy, GLMakie, HYPRE</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">darcy, kg, meter, year, day, bar </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> si_units</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:darcy</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:kilogram</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:meter</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:year</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:day</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:bar</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1000.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">meter</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">H </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 100.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">meter</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">big </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> false</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"> # Paper uses big, takes some more time to run</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> big</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    nx </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 500</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">else</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    nx </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 100</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">end</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">dx </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> L</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">nx</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">g </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> CartesianMesh</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">((nx, nx, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">), (L, L, H))</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">nc </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> number_of_cells</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(g)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">perm </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> fill</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">darcy, nc)</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">reservoir </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> reservoir_domain</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(g, permeability </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">darcy)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">centroids </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> reservoir[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:cell_centroids</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">rock_type </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> fill</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, nc)</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (i, x, y) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">in</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> zip</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">eachindex</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(perm), centroids[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, :], centroids[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, :])</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    xseg </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (x </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (x </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.8</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (y </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.75</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (y </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.8</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    yseg </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (y </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (y </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.8</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (x </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.75</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (x </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.8</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L)</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> xseg </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">||</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> yseg</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        rock_type[i] </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 2</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    end</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    xseg </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (x </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (x </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.55</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (y </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.50</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (y </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.55</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    yseg </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (y </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (y </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.55</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (x </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.50</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (x </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.55</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L)</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> xseg </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">||</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> yseg</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        rock_type[i] </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 3</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    end</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    xseg </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (x </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (x </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.3</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (y </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.25</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (y </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.3</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    yseg </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (y </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (y </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.3</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (x </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.25</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (x </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.3</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">L)</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> xseg </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">||</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> yseg</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        rock_type[i] </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 4</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    end</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">end</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">perm </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> reservoir[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:permeability</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">@.</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> perm[rock_type </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">==</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">] </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.001</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">darcy</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">@.</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> perm[rock_type </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">==</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 3</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">] </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.005</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">darcy</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">@.</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> perm[rock_type </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">==</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 4</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">] </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0.01</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">darcy</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">I </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> setup_vertical_well</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(reservoir, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, name </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> :Injector</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">P </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> setup_vertical_well</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(reservoir, nx, nx, name </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> :Producer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">phases </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">AqueousPhase</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">VaporPhase</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">())</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">rhoWS, rhoGS </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1000.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">kg</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">meter</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">^</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">700.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">kg</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">meter</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">^</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">system </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> ImmiscibleSystem</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(phases, reference_densities </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (rhoWS, rhoGS))</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">model, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> setup_reservoir_model</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(reservoir, system, wells </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> [I, P])</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">rmodel </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> reservoir_model</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(model)</span></span></code></pre></div><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>SimulationModel:</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  Model with 20000 degrees of freedom, 20000 equations and 79600 parameters</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  domain:</span></span>
+<span class="line"><span>    DiscretizedDomain with MinimalTPFATopology (10000 cells, 19800 faces) and discretizations for mass_flow, heat_flow</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  system:</span></span>
+<span class="line"><span>    ImmiscibleSystem with AqueousPhase, VaporPhase</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  context:</span></span>
+<span class="line"><span>    ParallelCSRContext(BlockMajorLayout(false), 1000, 1, MetisPartitioner(:KWAY))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  formulation:</span></span>
+<span class="line"><span>    FullyImplicitFormulation()</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  data_domain:</span></span>
+<span class="line"><span>    DataDomain wrapping CartesianMesh (3D) with 100x100x1=10000 cells with 17 data fields added:</span></span>
+<span class="line"><span>  10000 Cells</span></span>
+<span class="line"><span>    :permeability =&gt; 10000 Vector{Float64}</span></span>
+<span class="line"><span>    :porosity =&gt; 10000 Vector{Float64}</span></span>
+<span class="line"><span>    :rock_thermal_conductivity =&gt; 10000 Vector{Float64}</span></span>
+<span class="line"><span>    :fluid_thermal_conductivity =&gt; 10000 Vector{Float64}</span></span>
+<span class="line"><span>    :rock_density =&gt; 10000 Vector{Float64}</span></span>
+<span class="line"><span>    :cell_centroids =&gt; 3×10000 Matrix{Float64}</span></span>
+<span class="line"><span>    :volumes =&gt; 10000 Vector{Float64}</span></span>
+<span class="line"><span>  19800 Faces</span></span>
+<span class="line"><span>    :neighbors =&gt; 2×19800 Matrix{Int64}</span></span>
+<span class="line"><span>    :areas =&gt; 19800 Vector{Float64}</span></span>
+<span class="line"><span>    :normals =&gt; 3×19800 Matrix{Float64}</span></span>
+<span class="line"><span>    :face_centroids =&gt; 3×19800 Matrix{Float64}</span></span>
+<span class="line"><span>  39600 HalfFaces</span></span>
+<span class="line"><span>    :half_face_cells =&gt; 39600 Vector{Int64}</span></span>
+<span class="line"><span>    :half_face_faces =&gt; 39600 Vector{Int64}</span></span>
+<span class="line"><span>  20400 BoundaryFaces</span></span>
+<span class="line"><span>    :boundary_areas =&gt; 20400 Vector{Float64}</span></span>
+<span class="line"><span>    :boundary_centroids =&gt; 3×20400 Matrix{Float64}</span></span>
+<span class="line"><span>    :boundary_normals =&gt; 3×20400 Matrix{Float64}</span></span>
+<span class="line"><span>    :boundary_neighbors =&gt; 20400 Vector{Int64}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  primary_variables:</span></span>
+<span class="line"><span>   1) Pressure    ∈ 10000 Cells: 1 dof each</span></span>
+<span class="line"><span>   2) Saturations ∈ 10000 Cells: 1 dof, 2 values each</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  secondary_variables:</span></span>
+<span class="line"><span>   1) PhaseMassDensities     ∈ 10000 Cells: 2 values each</span></span>
+<span class="line"><span>      -&gt; ConstantCompressibilityDensities as evaluator</span></span>
+<span class="line"><span>   2) TotalMasses            ∈ 10000 Cells: 2 values each</span></span>
+<span class="line"><span>      -&gt; TotalMasses as evaluator</span></span>
+<span class="line"><span>   3) RelativePermeabilities ∈ 10000 Cells: 2 values each</span></span>
+<span class="line"><span>      -&gt; BrooksCoreyRelativePermeabilities as evaluator</span></span>
+<span class="line"><span>   4) PhaseMobilities        ∈ 10000 Cells: 2 values each</span></span>
+<span class="line"><span>      -&gt; JutulDarcy.PhaseMobilities as evaluator</span></span>
+<span class="line"><span>   5) PhaseMassMobilities    ∈ 10000 Cells: 2 values each</span></span>
+<span class="line"><span>      -&gt; JutulDarcy.PhaseMassMobilities as evaluator</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  parameters:</span></span>
+<span class="line"><span>   1) Transmissibilities        ∈ 19800 Faces: Scalar</span></span>
+<span class="line"><span>   2) TwoPointGravityDifference ∈ 19800 Faces: Scalar</span></span>
+<span class="line"><span>   3) ConnateWater              ∈ 10000 Cells: Scalar</span></span>
+<span class="line"><span>   4) PhaseViscosities          ∈ 10000 Cells: 2 values each</span></span>
+<span class="line"><span>   5) FluidVolume               ∈ 10000 Cells: Scalar</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  equations:</span></span>
+<span class="line"><span>   1) mass_conservation ∈ 10000 Cells: 2 values each</span></span>
+<span class="line"><span>      -&gt; ConservationLaw{:TotalMasses, TwoPointPotentialFlowHardCoded{Vector{Int64}, Vector{@NamedTuple{self::Int64, other::Int64, face::Int64, face_sign::Int64}}}, Jutul.DefaultFlux, 2}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  output_variables:</span></span>
+<span class="line"><span>    Pressure, Saturations, TotalMasses</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  extra:</span></span>
+<span class="line"><span>    OrderedCollections.OrderedDict{Symbol, Any} with keys: Symbol[]</span></span></code></pre></div><h2 id="Plot-the-initial-variable-graph" tabindex="-1">Plot the initial variable graph <a class="header-anchor" href="#Plot-the-initial-variable-graph" aria-label="Permalink to &quot;Plot the initial variable graph {#Plot-the-initial-variable-graph}&quot;">​</a></h2><p>We plot the default variable graph that describes how the different variables relate to each other. When we add a new parameter and property in the next section, the graph is automatically modified.</p><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">using</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> NetworkLayout, LayeredLayouts, GraphMakie</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Jutul</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">plot_variable_graph</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(rmodel)</span></span></code></pre></div><p><img src="`+l+`" alt=""></p><h2 id="Change-the-variables" tabindex="-1">Change the variables <a class="header-anchor" href="#Change-the-variables" aria-label="Permalink to &quot;Change the variables {#Change-the-variables}&quot;">​</a></h2><p>We replace the density variable with a more compressible version, and we also define a new relative permeability variable that depends on a new parameter <code>KrExponents</code> to define the exponent of the relative permeability in each cell and phase of the model.</p><p>This is done through several steps:</p><ol><li><p>First, we define the type</p></li><li><p>We define functions that act on that type, in particular the update function that is used to evaluate the new relative permeability during the simulation for named inputs <code>Saturations</code> and <code>KrExponents</code>.</p></li><li><p>We define the <code>KrExponents</code> as a model parameter with a default value, that can subsequently be used by the relative permeability.</p></li></ol><p>Finally we plot the variable graph again to verify that the new relationship has been included in our model.</p><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">c </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> [</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1e-6</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">bar, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1e-4</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">bar]</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">density </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> ConstantCompressibilityDensities</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(p_ref </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">bar, density_ref </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> [rhoWS, rhoGS], compressibility </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> c)</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">replace_variables!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(rmodel, PhaseMassDensities </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> density);</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">import</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> JutulDarcy</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> AbstractRelativePermeabilities, PhaseVariables</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> MyKr </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;:</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> AbstractRelativePermeabilities</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> end</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">@jutul_secondary</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> function</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> update_my_kr!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(vals, def</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">MyKr</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, model, Saturations, KrExponents, cells_to_update)</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> c </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">in</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cells_to_update</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ph </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">in</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> axes</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(vals, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            S_α </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> max</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(Saturations[ph, c], </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            n_α </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> KrExponents[ph, c]</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            vals[ph, c] </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> S_α</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">^</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">n_α</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        end</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    end</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">end</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> MyKrExp </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;:</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> PhaseVariables</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> end</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Jutul</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">default_value</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(model, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">MyKrExp</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 2.0</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">set_parameters!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(rmodel, KrExponents </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> MyKrExp</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">())</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">replace_variables!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(rmodel, RelativePermeabilities </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> MyKr</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Jutul</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">plot_variable_graph</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(rmodel)</span></span></code></pre></div><p><img src="`+e+`" alt=""></p><h2 id="Set-up-scenario-and-simulate" tabindex="-1">Set up scenario and simulate <a class="header-anchor" href="#Set-up-scenario-and-simulate" aria-label="Permalink to &quot;Set up scenario and simulate {#Set-up-scenario-and-simulate}&quot;">​</a></h2><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">parameters </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> setup_parameters</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(model)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">exponents </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> parameters[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:Reservoir</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">][</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:KrExponents</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (cell, rtype) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">in</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> enumerate</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(rock_type)</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> rtype </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">==</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        exp_w </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 2</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        exp_g </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 3</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    else</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        exp_w </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        exp_g </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 2</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    end</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    exponents[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, cell] </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> exp_w</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    exponents[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, cell] </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> exp_g</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">end</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">pv </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> pore_volume</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(model, parameters)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">state0 </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> setup_reservoir_state</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(model, Pressure </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 150</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">bar, Saturations </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> [</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">])</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">dt </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> repeat</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">([</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">30.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">day, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">12</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">5</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">pv </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> pore_volume</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(model, parameters)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">total_time </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> sum</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(dt)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">inj_rate </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> sum</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(pv)</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">total_time</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">rate_target </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> TotalRateTarget</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(inj_rate)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">I_ctrl </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> InjectorControl</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(rate_target, [</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">], density </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> rhoGS)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">bhp_target </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> BottomHolePressureTarget</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">50</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">bar)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">P_ctrl </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> ProducerControl</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(bhp_target)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">controls </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> Dict</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">controls[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:Injector</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">] </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> I_ctrl</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">controls[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:Producer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">] </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> P_ctrl</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">forces </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> setup_reservoir_forces</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(model, control </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> controls)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">case </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> JutulCase</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(model, dt, forces, parameters </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> parameters, state0 </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> state0)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">result </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> simulate_reservoir</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(case, output_substates </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, info_level </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">ws, states </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> result</span></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">ws</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:Producer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">:grat</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span></code></pre></div><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>Legend</span></span>
+<span class="line"><span>┌───────┬──────────────────┬──────┬─────────────────────────────┐</span></span>
+<span class="line"><span>│ Label │ Description      │ Unit │ Type of quantity            │</span></span>
+<span class="line"><span>├───────┼──────────────────┼──────┼─────────────────────────────┤</span></span>
+<span class="line"><span>│ grat  │ Surface gas rate │ m³/s │ gas_volume_surface per time │</span></span>
+<span class="line"><span>└───────┴──────────────────┴──────┴─────────────────────────────┘</span></span>
+<span class="line"><span>Producer result</span></span>
+<span class="line"><span>┌─────────┬──────────────┐</span></span>
+<span class="line"><span>│    time │         grat │</span></span>
+<span class="line"><span>│    days │         m³/s │</span></span>
+<span class="line"><span>├─────────┼──────────────┤</span></span>
+<span class="line"><span>│     1.0 │         -0.0 │</span></span>
+<span class="line"><span>│ 1.64286 │         -0.0 │</span></span>
+<span class="line"><span>│ 2.05612 │         -0.0 │</span></span>
+<span class="line"><span>│ 2.98597 │         -0.0 │</span></span>
+<span class="line"><span>│ 5.07812 │         -0.0 │</span></span>
+<span class="line"><span>│ 8.84401 │         -0.0 │</span></span>
+<span class="line"><span>│ 14.4928 │         -0.0 │</span></span>
+<span class="line"><span>│ 22.2464 │         -0.0 │</span></span>
+<span class="line"><span>│    30.0 │         -0.0 │</span></span>
+<span class="line"><span>│ 39.9689 │         -0.0 │</span></span>
+<span class="line"><span>│ 49.9844 │         -0.0 │</span></span>
+<span class="line"><span>│    60.0 │         -0.0 │</span></span>
+<span class="line"><span>│    75.0 │         -0.0 │</span></span>
+<span class="line"><span>│    90.0 │         -0.0 │</span></span>
+<span class="line"><span>│   105.0 │         -0.0 │</span></span>
+<span class="line"><span>│   120.0 │         -0.0 │</span></span>
+<span class="line"><span>│   135.0 │         -0.0 │</span></span>
+<span class="line"><span>│   150.0 │         -0.0 │</span></span>
+<span class="line"><span>│   165.0 │         -0.0 │</span></span>
+<span class="line"><span>│   180.0 │         -0.0 │</span></span>
+<span class="line"><span>│   195.0 │         -0.0 │</span></span>
+<span class="line"><span>│   210.0 │         -0.0 │</span></span>
+<span class="line"><span>│   225.0 │         -0.0 │</span></span>
+<span class="line"><span>│   240.0 │         -0.0 │</span></span>
+<span class="line"><span>│   255.0 │         -0.0 │</span></span>
+<span class="line"><span>│   270.0 │         -0.0 │</span></span>
+<span class="line"><span>│   285.0 │         -0.0 │</span></span>
+<span class="line"><span>│   300.0 │         -0.0 │</span></span>
+<span class="line"><span>│   315.0 │         -0.0 │</span></span>
+<span class="line"><span>│   330.0 │         -0.0 │</span></span>
+<span class="line"><span>│   345.0 │         -0.0 │</span></span>
+<span class="line"><span>│   360.0 │         -0.0 │</span></span>
+<span class="line"><span>│   375.0 │         -0.0 │</span></span>
+<span class="line"><span>│   390.0 │         -0.0 │</span></span>
+<span class="line"><span>│   405.0 │         -0.0 │</span></span>
+<span class="line"><span>│   420.0 │         -0.0 │</span></span>
+<span class="line"><span>│   435.0 │         -0.0 │</span></span>
+<span class="line"><span>│   450.0 │         -0.0 │</span></span>
+<span class="line"><span>│   465.0 │         -0.0 │</span></span>
+<span class="line"><span>│   480.0 │         -0.0 │</span></span>
+<span class="line"><span>│   495.0 │         -0.0 │</span></span>
+<span class="line"><span>│   510.0 │         -0.0 │</span></span>
+<span class="line"><span>│   525.0 │         -0.0 │</span></span>
+<span class="line"><span>│   540.0 │         -0.0 │</span></span>
+<span class="line"><span>│   555.0 │         -0.0 │</span></span>
+<span class="line"><span>│   570.0 │         -0.0 │</span></span>
+<span class="line"><span>│   585.0 │         -0.0 │</span></span>
+<span class="line"><span>│   600.0 │         -0.0 │</span></span>
+<span class="line"><span>│   615.0 │         -0.0 │</span></span>
+<span class="line"><span>│   630.0 │         -0.0 │</span></span>
+<span class="line"><span>│   645.0 │         -0.0 │</span></span>
+<span class="line"><span>│   660.0 │         -0.0 │</span></span>
+<span class="line"><span>│   675.0 │         -0.0 │</span></span>
+<span class="line"><span>│   690.0 │         -0.0 │</span></span>
+<span class="line"><span>│   705.0 │         -0.0 │</span></span>
+<span class="line"><span>│   720.0 │         -0.0 │</span></span>
+<span class="line"><span>│   735.0 │         -0.0 │</span></span>
+<span class="line"><span>│   750.0 │         -0.0 │</span></span>
+<span class="line"><span>│   765.0 │         -0.0 │</span></span>
+<span class="line"><span>│   780.0 │         -0.0 │</span></span>
+<span class="line"><span>│   795.0 │         -0.0 │</span></span>
+<span class="line"><span>│   810.0 │         -0.0 │</span></span>
+<span class="line"><span>│   825.0 │         -0.0 │</span></span>
+<span class="line"><span>│   840.0 │         -0.0 │</span></span>
+<span class="line"><span>│   855.0 │         -0.0 │</span></span>
+<span class="line"><span>│   870.0 │         -0.0 │</span></span>
+<span class="line"><span>│   885.0 │         -0.0 │</span></span>
+<span class="line"><span>│   900.0 │         -0.0 │</span></span>
+<span class="line"><span>│   915.0 │         -0.0 │</span></span>
+<span class="line"><span>│   930.0 │         -0.0 │</span></span>
+<span class="line"><span>│   945.0 │         -0.0 │</span></span>
+<span class="line"><span>│   960.0 │         -0.0 │</span></span>
+<span class="line"><span>│   975.0 │         -0.0 │</span></span>
+<span class="line"><span>│   990.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1005.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1020.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1035.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1050.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1065.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1080.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1095.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1110.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1125.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1140.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1155.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1170.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1185.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1200.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1215.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1230.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1245.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1260.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1275.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1290.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1305.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1320.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1335.0 │         -0.0 │</span></span>
+<span class="line"><span>│  1350.0 │ -0.000270177 │</span></span>
+<span class="line"><span>│  1365.0 │  -0.00947943 │</span></span>
+<span class="line"><span>│  1372.5 │   -0.0157172 │</span></span>
+<span class="line"><span>│  1380.0 │    -0.020079 │</span></span>
+<span class="line"><span>│  1395.0 │   -0.0252096 │</span></span>
+<span class="line"><span>│  1410.0 │   -0.0286564 │</span></span>
+<span class="line"><span>│  1440.0 │   -0.0325147 │</span></span>
+<span class="line"><span>│  1470.0 │   -0.0349002 │</span></span>
+<span class="line"><span>│  1500.0 │   -0.0365192 │</span></span>
+<span class="line"><span>│  1530.0 │   -0.0377315 │</span></span>
+<span class="line"><span>│  1560.0 │   -0.0387118 │</span></span>
+<span class="line"><span>│  1590.0 │   -0.0395436 │</span></span>
+<span class="line"><span>│  1620.0 │   -0.0402677 │</span></span>
+<span class="line"><span>│  1650.0 │    -0.040907 │</span></span>
+<span class="line"><span>│  1680.0 │   -0.0414767 │</span></span>
+<span class="line"><span>│  1710.0 │   -0.0419889 │</span></span>
+<span class="line"><span>│  1740.0 │    -0.042455 │</span></span>
+<span class="line"><span>│  1770.0 │    -0.042886 │</span></span>
+<span class="line"><span>│  1800.0 │   -0.0432937 │</span></span>
+<span class="line"><span>└─────────┴──────────────┘</span></span></code></pre></div><h2 id="Define-objective-function" tabindex="-1">Define objective function <a class="header-anchor" href="#Define-objective-function" aria-label="Permalink to &quot;Define objective function {#Define-objective-function}&quot;">​</a></h2><p>We let the objective function be the amount produced of produced gas, normalized by the injected amount.</p><div class="language-@example vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">@example</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>using GLMakie</span></span>
+<span class="line"><span>function objective_function(model, state, Δt, step_i, forces)</span></span>
+<span class="line"><span>    grat = JutulDarcy.compute_well_qoi(model, state, forces, :Producer, SurfaceGasRateTarget)</span></span>
+<span class="line"><span>    return Δt*grat/(inj_rate*total_time)</span></span>
+<span class="line"><span>end</span></span>
+<span class="line"><span>data_domain_with_gradients = JutulDarcy.reservoir_sensitivities(case, result, objective_function, include_parameters = true)</span></span></code></pre></div><h2 id="Launch-interactive-plotter-for-cell-wise-gradients" tabindex="-1">Launch interactive plotter for cell-wise gradients <a class="header-anchor" href="#Launch-interactive-plotter-for-cell-wise-gradients" aria-label="Permalink to &quot;Launch interactive plotter for cell-wise gradients {#Launch-interactive-plotter-for-cell-wise-gradients}&quot;">​</a></h2><div class="language-@example vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">@example</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>plot_reservoir(data_domain_with_gradients)</span></span></code></pre></div><h2 id="Set-up-plotting-functions" tabindex="-1">Set up plotting functions <a class="header-anchor" href="#Set-up-plotting-functions" aria-label="Permalink to &quot;Set up plotting functions {#Set-up-plotting-functions}&quot;">​</a></h2><div class="language-@example vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">@example</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>∂K = data_domain_with_gradients[:permeability]</span></span>
+<span class="line"><span>∂ϕ = data_domain_with_gradients[:porosity]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>function get_cscale(x)</span></span>
+<span class="line"><span>    minv0, maxv0 = extrema(x)</span></span>
+<span class="line"><span>    minv = min(minv0, -maxv0)</span></span>
+<span class="line"><span>    maxv = max(maxv0, -minv0)</span></span>
+<span class="line"><span>    return (minv, maxv)</span></span>
+<span class="line"><span>end</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>function myplot(title, vals; kwarg...)</span></span>
+<span class="line"><span>    fig = Figure()</span></span>
+<span class="line"><span>    myplot!(fig, 1, 1, title, vals; kwarg...)</span></span>
+<span class="line"><span>    return fig</span></span>
+<span class="line"><span>end</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>function myplot!(fig, I, J, title, vals; is_grad = false, is_log = false, colorrange = missing, contourplot = false, nticks = 5, ticks = missing, colorbar = true, kwarg...)</span></span>
+<span class="line"><span>    ax = Axis(fig[I, J], title = title)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    if is_grad</span></span>
+<span class="line"><span>        if ismissing(colorrange)</span></span>
+<span class="line"><span>            colorrange = get_cscale(vals)</span></span>
+<span class="line"><span>        end</span></span>
+<span class="line"><span>        cmap = :seismic</span></span>
+<span class="line"><span>    else</span></span>
+<span class="line"><span>        if ismissing(colorrange)</span></span>
+<span class="line"><span>            colorrange = extrema(vals)</span></span>
+<span class="line"><span>        end</span></span>
+<span class="line"><span>        cmap = :seaborn_icefire_gradient</span></span>
+<span class="line"><span>    end</span></span>
+<span class="line"><span>    hidedecorations!(ax)</span></span>
+<span class="line"><span>    hidespines!(ax)</span></span>
+<span class="line"><span>    arg = (; colormap = cmap, colorrange = colorrange, kwarg...)</span></span>
+<span class="line"><span>    plt = plot_cell_data!(ax, g, vals; shading = NoShading, arg...)</span></span>
+<span class="line"><span>    if colorbar</span></span>
+<span class="line"><span>        if ismissing(ticks)</span></span>
+<span class="line"><span>            ticks = range(colorrange..., nticks)</span></span>
+<span class="line"><span>        end</span></span>
+<span class="line"><span>        Colorbar(fig[I, J+1], plt, ticks = ticks, ticklabelsize = 25, size = 25)</span></span>
+<span class="line"><span>    end</span></span>
+<span class="line"><span>    return fig</span></span>
+<span class="line"><span>end</span></span></code></pre></div><h2 id="Plot-the-permeability" tabindex="-1">Plot the permeability <a class="header-anchor" href="#Plot-the-permeability" aria-label="Permalink to &quot;Plot the permeability {#Plot-the-permeability}&quot;">​</a></h2><div class="language-@example vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">@example</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>myplot(&quot;Permeability&quot;, perm./darcy, colorscale = log10, ticks = [0.001, 0.01, 0.1])</span></span></code></pre></div><h2 id="Plot-the-evolution-of-the-gas-saturation" tabindex="-1">Plot the evolution of the gas saturation <a class="header-anchor" href="#Plot-the-evolution-of-the-gas-saturation" aria-label="Permalink to &quot;Plot the evolution of the gas saturation {#Plot-the-evolution-of-the-gas-saturation}&quot;">​</a></h2><div class="language-@example vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">@example</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>fig = Figure(size = (1200, 400))</span></span>
+<span class="line"><span>sg = states[25][:Saturations][2, :]</span></span>
+<span class="line"><span>myplot!(fig, 1, 1, &quot;Gas saturation&quot;, sg, colorrange = (0, 1), colorbar = false)</span></span>
+<span class="line"><span>sg = states[70][:Saturations][2, :]</span></span>
+<span class="line"><span>myplot!(fig, 1, 2, &quot;Gas saturation&quot;, sg, colorrange = (0, 1), colorbar = false)</span></span>
+<span class="line"><span>sg = states[end][:Saturations][2, :]</span></span>
+<span class="line"><span>myplot!(fig, 1, 3, &quot;Gas saturation&quot;, sg, colorrange = (0, 1))</span></span>
+<span class="line"><span>fig</span></span>
+<span class="line"><span># ## Plot the sensitivity of the objective with respect to permeability</span></span>
+<span class="line"><span>if big</span></span>
+<span class="line"><span>    cr = (-0.001, 0.001)</span></span>
+<span class="line"><span>    cticks = [-0.001, -0.0005, 0.0005, 0.001]</span></span>
+<span class="line"><span>else</span></span>
+<span class="line"><span>    cr = (-0.05, 0.05)</span></span>
+<span class="line"><span>    cticks = [-0.05, -0.025, 0, 0.025, 0.05]</span></span>
+<span class="line"><span>end</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>myplot(&quot;perm_sens&quot;, ∂K.*darcy, is_grad = true, ticks = cticks, colorrange = cr)</span></span>
+<span class="line"><span># ## Plot the sensitivity of the objective with respect to porosity</span></span>
+<span class="line"><span>if big</span></span>
+<span class="line"><span>    cr = (-0.00001, 0.00001)</span></span>
+<span class="line"><span>else</span></span>
+<span class="line"><span>    cr = (-0.00025, 0.00025)</span></span>
+<span class="line"><span>end</span></span>
+<span class="line"><span>myplot(&quot;porosity_sens&quot;, ∂ϕ, is_grad = true, colorrange = cr)</span></span>
+<span class="line"><span>#</span></span>
+<span class="line"><span>∂xyz = data_domain_with_gradients[:cell_centroids]</span></span>
+<span class="line"><span>∂x = ∂xyz[1, :]</span></span>
+<span class="line"><span>∂y = ∂xyz[2, :]</span></span>
+<span class="line"><span>∂z = ∂xyz[3, :]</span></span>
+<span class="line"><span>#</span></span>
+<span class="line"><span>if big</span></span>
+<span class="line"><span>    cr = [-1e-8, 1e-8]</span></span>
+<span class="line"><span>else</span></span>
+<span class="line"><span>    cr = [-1e-7, 1e-7]</span></span>
+<span class="line"><span>end</span></span></code></pre></div><h2 id="Plot-the-sensitivity-of-the-objective-with-respect-to-x-cell-centroids" tabindex="-1">Plot the sensitivity of the objective with respect to x cell centroids <a class="header-anchor" href="#Plot-the-sensitivity-of-the-objective-with-respect-to-x-cell-centroids" aria-label="Permalink to &quot;Plot the sensitivity of the objective with respect to x cell centroids {#Plot-the-sensitivity-of-the-objective-with-respect-to-x-cell-centroids}&quot;">​</a></h2><div class="language-@example vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">@example</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>myplot(&quot;dx_sens&quot;, ∂x, is_grad = true, colorrange = cr)</span></span></code></pre></div><h2 id="Plot-the-sensitivity-of-the-objective-with-respect-to-y-cell-centroids" tabindex="-1">Plot the sensitivity of the objective with respect to y cell centroids <a class="header-anchor" href="#Plot-the-sensitivity-of-the-objective-with-respect-to-y-cell-centroids" aria-label="Permalink to &quot;Plot the sensitivity of the objective with respect to y cell centroids {#Plot-the-sensitivity-of-the-objective-with-respect-to-y-cell-centroids}&quot;">​</a></h2><div class="language-@example vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">@example</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>myplot(&quot;dy_sens&quot;, ∂y, is_grad = true, colorrange = cr)</span></span></code></pre></div><h2 id="Plot-the-sensitivity-of-the-objective-with-respect-to-z-cell-centroids" tabindex="-1">Plot the sensitivity of the objective with respect to z cell centroids <a class="header-anchor" href="#Plot-the-sensitivity-of-the-objective-with-respect-to-z-cell-centroids" aria-label="Permalink to &quot;Plot the sensitivity of the objective with respect to z cell centroids {#Plot-the-sensitivity-of-the-objective-with-respect-to-z-cell-centroids}&quot;">​</a></h2><p>Note: The effect here is primarily coming from gravity.</p><div class="language-@example vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">@example</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>myplot(&quot;dz_sens&quot;, ∂z, is_grad = true, colorrange = cr)</span></span></code></pre></div><h2 id="Plot-the-effect-of-the-new-liquid-kr-exponent-on-the-gas-production" tabindex="-1">Plot the effect of the new liquid kr exponent on the gas production <a class="header-anchor" href="#Plot-the-effect-of-the-new-liquid-kr-exponent-on-the-gas-production" aria-label="Permalink to &quot;Plot the effect of the new liquid kr exponent on the gas production {#Plot-the-effect-of-the-new-liquid-kr-exponent-on-the-gas-production}&quot;">​</a></h2><div class="language-@example vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">@example</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>if big</span></span>
+<span class="line"><span>    cr = [-1e-7, 1e-7]</span></span>
+<span class="line"><span>else</span></span>
+<span class="line"><span>    cr = [-8e-6, 8e-6]</span></span>
+<span class="line"><span>end</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>kre = data_domain_with_gradients[:KrExponents]</span></span>
+<span class="line"><span>exp_l = kre[1, :]</span></span>
+<span class="line"><span>myplot(&quot;exp_liquid&quot;, exp_l, is_grad = true, colorrange = cr)</span></span></code></pre></div><h2 id="Plot-the-effect-of-the-new-vapor-kr-exponent-on-the-gas-production" tabindex="-1">Plot the effect of the new vapor kr exponent on the gas production <a class="header-anchor" href="#Plot-the-effect-of-the-new-vapor-kr-exponent-on-the-gas-production" aria-label="Permalink to &quot;Plot the effect of the new vapor kr exponent on the gas production {#Plot-the-effect-of-the-new-vapor-kr-exponent-on-the-gas-production}&quot;">​</a></h2><div class="language-@example vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">@example</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>exp_v = kre[2, :]</span></span>
+<span class="line"><span>myplot(&quot;exp_vapor&quot;, exp_v, is_grad = true, colorrange = cr)</span></span></code></pre></div><h2 id="Plot-the-effect-of-the-liquid-phase-viscosity" tabindex="-1">Plot the effect of the liquid phase viscosity <a class="header-anchor" href="#Plot-the-effect-of-the-liquid-phase-viscosity" aria-label="Permalink to &quot;Plot the effect of the liquid phase viscosity {#Plot-the-effect-of-the-liquid-phase-viscosity}&quot;">​</a></h2><p>Note: The viscosity can in many models be a variable and not a parameter. For this simple model, however, it is treated as a parameter and we obtain sensitivities.</p><div class="language-@example vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">@example</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>mu = data_domain_with_gradients[:PhaseViscosities]</span></span>
+<span class="line"><span>if big</span></span>
+<span class="line"><span>    cr = [-0.001, 0.001]</span></span>
+<span class="line"><span>else</span></span>
+<span class="line"><span>    cr = [-0.01, 0.01]</span></span>
+<span class="line"><span>end</span></span>
+<span class="line"><span>mu_l = mu[1, :]</span></span>
+<span class="line"><span>myplot(&quot;mu_liquid&quot;, mu_l, is_grad = true, colorrange = cr)</span></span></code></pre></div><h2 id="Plot-the-effect-of-the-liquid-phase-viscosity-2" tabindex="-1">Plot the effect of the liquid phase viscosity <a class="header-anchor" href="#Plot-the-effect-of-the-liquid-phase-viscosity-2" aria-label="Permalink to &quot;Plot the effect of the liquid phase viscosity {#Plot-the-effect-of-the-liquid-phase-viscosity-2}&quot;">​</a></h2><div class="language-@example vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">@example</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>mu_v = mu[2, :]</span></span>
+<span class="line"><span>myplot(&quot;mu_vapor&quot;, mu_v, is_grad = true, colorrange = cr)</span></span></code></pre></div><h2 id="Example-on-GitHub" tabindex="-1">Example on GitHub <a class="header-anchor" href="#Example-on-GitHub" aria-label="Permalink to &quot;Example on GitHub {#Example-on-GitHub}&quot;">​</a></h2><p>If you would like to run this example yourself, it can be downloaded from the JutulDarcy.jl GitHub repository <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/main/examples/intro_sensitivities.jl" target="_blank" rel="noreferrer">as a script</a>, or as a <a href="https://github.com/sintefmath/JutulDarcy.jl/blob/gh-pages/dev/final_site/notebooks/intro_sensitivities.ipynb" target="_blank" rel="noreferrer">Jupyter Notebook</a></p><hr><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl" target="_blank" rel="noreferrer">Literate.jl</a>.</em></p>`,51)]))}const y=a(t,[["render",h]]);export{g as __pageData,y as default};
