@@ -1,3 +1,56 @@
+using JutulDarcy, GLMakie
+include("C:/Users/Oleg/.julia/packages/Jutul/4EUEx/src/simulator/simulator1.jl")
+using Jutul.Simulator1
+
+include("Simulator2.jl")
+using .Simulator2
+
+
+Test_2()
+
+
+Test_3()
+
+basedir = "D:/GitHub/JutulDarcy.jl/egg"
+data_file_path = "Egg_Model_ECL.DATA"
+case = setup_case_from_data_file(joinpath(basedir, data_file_path))
+
+Test_2()
+
+result = simulate_reservoir(case)
+scene = plot_reservoir_simulation_result(case.model, result)
+
+using JutulDarcy, GLMakie, Serialization
+
+basedir = "D:/JutulDarcy.jl-main/egg"
+data_file_path = "Egg_Model_ECL.DATA"
+result_file = "D:/JutulDarcy.jl-main/egg/simulation_result.jls"
+
+if isfile(result_file)
+    println("Loading results...")
+    result = Serialization.deserialize(result_file)ч
+    println("Results loaded from: $result_file")
+else
+    println("No results found, making calculation ...")
+    case = setup_case_from_data_file(joinpath(basedir, data_file_path))
+    result = simulate_reservoir(case)
+
+    Serialization.serialize(result_file, result)
+    println("Results saved in: $result_file")
+end
+
+plot_reservoir_simulation_result(case.model, result)
+
+
+basedir2 = "D:/JutulDarcy.jl-main/spe10model2"
+data_file_path2 = "SPE10_MODEL2.DATA"
+case2 = setup_case_from_data_file(joinpath(basedir2, data_file_path2))
+result2 = simulate_reservoir(case2)
+
+# -------------------------------------------------------------------------------------------------------------------
+#EGG
+
+
 using Pkg
 Pkg.add("DelimitedFiles")
 Pkg.add("HYPRE")
@@ -56,45 +109,7 @@ save("water_rate.png", water_plot)
 oil_plot = plot_well_results(:orat, prod, "Surface oil rate / m³/day")
 save("oil_rate.png", oil_plot)
 
-
-
-using JutulDarcy, GLMakie
-
-basedir = "D:/JutulDarcy.jl-main/egg"
-data_file_path = "Egg_Model_ECL.DATA"
-case = setup_case_from_data_file(joinpath(basedir, data_file_path))
-result = simulate_reservoir(case)
-scene = plot_reservoir_simulation_result(case.model, result)
-
-using JutulDarcy, GLMakie, Serialization
-
-basedir = "D:/JutulDarcy.jl-main/egg"
-data_file_path = "Egg_Model_ECL.DATA"
-result_file = "D:/JutulDarcy.jl-main/egg/simulation_result.jls"
-
-if isfile(result_file)
-    println("Loading results...")
-    result = Serialization.deserialize(result_file)ч
-    println("Results loaded from: $result_file")
-else
-    println("No results found, making calculation ...")
-    case = setup_case_from_data_file(joinpath(basedir, data_file_path))
-    result = simulate_reservoir(case)
-
-    Serialization.serialize(result_file, result)
-    println("Results saved in: $result_file")
-end
-
-plot_reservoir_simulation_result(case.model, result)
-
-
-basedir2 = "D:/JutulDarcy.jl-main/spe10model2"
-data_file_path2 = "SPE10_MODEL2.DATA"
-case2 = setup_case_from_data_file(joinpath(basedir2, data_file_path2))
-result2 = simulate_reservoir(case2)
-
-# -------------------------------------------------------------------------------------------------------------------
-#EGG
+#Validation ---------------------------------------------------------------------------------------------------
 
 
 using DelimitedFiles

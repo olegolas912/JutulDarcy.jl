@@ -601,6 +601,7 @@ ws, states, t = res_result
 $FIELDS
 """
 function ReservoirSimResult(model, result::Jutul.SimResult, forces, extra = Dict(); start_date = nothing, kwarg...)
+    println("----------------------------Test_src/types.jl_ReservoirSimResult")
     for (k, v) in kwarg
         extra[k] = v
     end

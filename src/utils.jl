@@ -872,9 +872,10 @@ result = simulate_reservoir(state0, model, dt, output_path = "/some/path", resta
 function simulate_reservoir(state0, model, dt;
         parameters = setup_parameters(model),
         forces = setup_forces(model),
-        kwarg...
+        kwarg...    
     )
     case = JutulCase(model, dt, forces, state0 = state0, parameters = parameters)
+    println("--------------------------------------------------Test_src/utils.jl_1--------------------------------------------")
     return simulate_reservoir(case; kwarg...)
 end
 
@@ -885,6 +886,7 @@ function simulate_reservoir(case::JutulCase;
         kwarg...
     )
     (; model, forces, state0, parameters, dt) = case
+    println("--------------------------------------------------Test_src/utils.jl_2--------------------------------------------")
     if ismissing(simulator)
         sim, config_new = setup_reservoir_simulator(model, state0, parameters; kwarg...)
         if ismissing(config)
