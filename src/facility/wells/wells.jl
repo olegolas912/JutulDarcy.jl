@@ -45,7 +45,7 @@ Jutul.variable_scale(t::TotalMassFlux) = t.scale
 
 default_surface_cond() = (p = 101325.0, T = 288.15) # Pa and deg. K from ISO 13443:1996 for natural gas
 
-function common_well_setup(nr; dz = nothing, WI = nothing, gravity = gravity_constant)
+function common_well_setup(nr; dz = nothing, WI = nothing, WIth = nothing, gravity = gravity_constant)
     if isnothing(dz)
         @warn "dz not provided for well. Assuming no gravity."
         gdz = zeros(nr)
@@ -55,11 +55,17 @@ function common_well_setup(nr; dz = nothing, WI = nothing, gravity = gravity_con
     end
     if isnothing(WI)
         @warn "No well indices provided. Using 1e-12."
-        WI = repeat(1e-12, nr)
+        WI = fill(1e-12, nr)
     else
         @assert length(WI) == nr  "Must have one well index per perforated cell ($(length(WI)) well indices, $nr reservoir cells))"
     end
-    return (WI, gdz)
+    if isnothing(WIth)
+        @warn "No thermal well indices provided. Using 1."
+        WIth = fill(1.0, nr)
+    else
+        @assert length(WIth) == nr  "Must have one thermal well index per perforated cell ($(length(WIth)) thermal well indices, $nr reservoir cells))"
+    end
+    return (WI, WIth, gdz)
 end
 
 """
@@ -80,9 +86,25 @@ well is set up.
 a Vector of `(I, J, K)` Tuples or a single Tuple of the same type.
 """
 function setup_well(D::DataDomain, reservoir_cells; cell_centers = D[:cell_centroids], kwarg...)
+    # Get permeability
     K = D[:permeability]
+    # Compute effective thermal conductivity
+    Λ_f = D[:fluid_thermal_conductivity]
+    Λ_r = D[:rock_thermal_conductivity]
+    ϕ = D[:porosity]
+    Λ_r = vec(Λ_r)
+    ϕ = vec(ϕ)
+    if size(Λ_f, 1) == 1 || Λ_f isa Vector
+        Λ_f = vec(Λ_f)
+        Λ = ϕ.*Λ_f + (1.0 .- ϕ).*Λ_r
+    else
+        # TODO: This is a bit of a hack. We should really have a proper way to
+        # do this inside the equations for multiphase flow.
+        Λ = Λ_r
+    end
+    # Get grid
     g = physical_representation(D)
-    return setup_well(g, K, reservoir_cells; cell_centers = cell_centers, kwarg...)
+    return setup_well(g, K, reservoir_cells; thermal_conductivity = Λ, cell_centers = cell_centers, kwarg...)
 end
 
 function setup_well(g, K, reservoir_cells::AbstractVector;
@@ -95,6 +117,8 @@ function setup_well(g, K, reservoir_cells::AbstractVector;
         simple_well = true,
         simple_well_regularization = 1.0,
         WI = missing,
+        WIth = missing,
+        thermal_conductivity = missing,
         dir = :z,
         kwarg...
     )
@@ -116,6 +140,8 @@ function setup_well(g, K, reservoir_cells::AbstractVector;
     end
     volumes = zeros(n)
     WI_computed = zeros(n)
+    WIth_computed = zeros(n)
+    Λ = thermal_conductivity
     dz = zeros(n)
 
     function get_entry(x::AbstractVector, i)
@@ -135,10 +161,24 @@ function setup_well(g, K, reservoir_cells::AbstractVector;
         r_i = get_entry(radius, i)
         s_i = get_entry(skin, i)
         if ismissing(WI_i) || isnan(WI_i)
-            WI_i = compute_peaceman_index(g, k_i, r_i, c, skin = s_i, Kh = Kh_i)
+            WI_i = compute_peaceman_index(g, k_i, r_i, c, skin = s_i, Kh = Kh_i, dir = dir)
         end
         WI_i::AbstractFloat
         WI_computed[i] = WI_i
+        WIth_i = 0.0
+        if !ismissing(Λ)
+            WIth_i = get_entry(WIth, i)
+            if Λ isa AbstractVector
+                Λ_i = Λ[c]
+            else
+                Λ_i = Λ[:, c]
+            end
+            if ismissing(WIth) || isnan(WIth)
+                WIth_i = compute_peaceman_index(g, Λ_i, r_i, c, dir = dir)
+            end
+            WIth_i::AbstractFloat
+        end
+        WIth_computed[i] = WIth_i
         center = vec(centers[:, i])
         dz[i] = center[3] - reference_depth
         if dir isa Symbol
@@ -155,11 +195,11 @@ function setup_well(g, K, reservoir_cells::AbstractVector;
         if ismissing(accumulator_volume)
             accumulator_volume = simple_well_regularization*maximum(volumes)
         end
-        W = SimpleWell(reservoir_cells; WI = WI_computed, volume = accumulator_volume, dz = dz, reference_depth = reference_depth, kwarg...)
+        W = SimpleWell(reservoir_cells; WI = WI_computed, WIth = WIth_computed, volume = accumulator_volume, dz = dz, reference_depth = reference_depth, kwarg...)
     else
         # Depth differences are taken care of via centers.
         dz *= 0.0
-        W = MultiSegmentWell(reservoir_cells, volumes, centers; WI = WI_computed, dz = dz, reference_depth = reference_depth, kwarg...)
+        W = MultiSegmentWell(reservoir_cells, volumes, centers; WI = WI_computed, WIth = WIth_computed, dz = dz, reference_depth = reference_depth, kwarg...)
     end
     return W
 end
@@ -168,6 +208,11 @@ function setup_well(g, K, reservoir_cell::Union{Int, Tuple, NamedTuple}; kwarg..
     return setup_well(g, K, [reservoir_cell]; kwarg...)
 end
 
+function setup_well_from_trajectory(D::DataDomain, traj; traj_arg = NamedTuple(), kwarg...)
+    G = D |> physical_representation |> UnstructuredMesh
+    cells = Jutul.find_enclosing_cells(G, traj; traj_arg...)
+    return setup_well(D, cells; kwarg...)
+end
 
 function map_well_nodes_to_reservoir_cells(w::MultiSegmentWell, reservoir::Union{DataDomain, Missing} = missing)
     # TODO: Try to more or less match it up cell by cell. Could be
@@ -229,9 +274,16 @@ medium / reservoir where the wells it to be placed. See [`SimpleWell`](@ref),
 arguments.
 """
 function setup_vertical_well(D::DataDomain, i, j; cell_centers = D[:cell_centroids], kwarg...)
+    # Get permeability
     K = D[:permeability]
+    # Compute effective thermal conductivity
+    Λ_f = D[:fluid_thermal_conductivity]
+    Λ_r = D[:rock_thermal_conductivity]
+    ϕ = D[:porosity]
+    Λ = ϕ.*Λ_f + (1.0 .- ϕ).*Λ_r
+    # Get grid
     g = physical_representation(D)
-    return setup_vertical_well(g, K, i, j; cell_centers = cell_centers, kwarg...)
+    return setup_vertical_well(g, K, i, j; thermal_conductivity = Λ, cell_centers = cell_centers, kwarg...)
 end
 
 """
@@ -262,7 +314,7 @@ function update_before_step_well!(well_state, well_model, res_state, res_model, 
 end
 
 function domain_fluid_volume(grid::WellDomain)
-    return grid.volumes
+    return grid.volumes.*grid.void_fraction
 end
 
 function domain_fluid_volume(grid::SimpleWell)
@@ -303,10 +355,7 @@ Base.@propagate_inbounds function multisegment_well_perforation_flux!(out, sys::
     rc = conn.reservoir
     wc = conn.well
     nph = number_of_phases(sys)
-    λ_t = 0
-    for ph in 1:nph
-        λ_t += state_res.PhaseMobilities[ph, rc]
-    end
+    λ_t = sum(perforation_reservoir_mobilities(state_res, state_well, sys, rc, wc))
     for ph in 1:nph
         out[ph] = perforation_phase_mass_flux(λ_t, conn, state_res, state_well, ph)
     end

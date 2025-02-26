@@ -1,4 +1,4 @@
-# # Validation: The Egg model (oil-water compressible)
+# # The Egg model: Two-phase oil-water model
 # A two-phase model that is taken from the first member of the EGG ensemble. The
 # model is a synthetic case with channelized permeability and water injection
 # with fixed controls. For more details, see the paper where the ensemble is
@@ -6,7 +6,6 @@
 #
 # [Jansen, Jan-Dirk, et al. "The egg model–a geological ensemble for reservoir
 # simulation." Geoscience Data Journal 1.2 (2014): 192-195.](https://doi.org/10.1002/gdj3.21)
-
 using Jutul, JutulDarcy, GLMakie, DelimitedFiles, HYPRE
 egg_dir = JutulDarcy.GeoEnergyIO.test_input_file_path("EGG")
 case = setup_case_from_data_file(joinpath(egg_dir, "EGG.DATA"))

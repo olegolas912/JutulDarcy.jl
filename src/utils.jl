@@ -143,6 +143,50 @@ function reservoir_system(flow::MultiPhaseSystem; kwarg...)
     reservoir_system(;flow = flow, kwarg...)
 end
 
+"""
+    well_domain(w::SimpleWell; kwarg...)
+    well_domain(w::MultiSegmentWell; kwarg...)
+    well_domain(w::DataDomain; kwarg...)
+
+Set up a `DataDomain` instance for a well
+"""
+function well_domain(w::SimpleWell; kwarg...)
+    return DataDomain(w; kwarg...)
+end
+
+function well_domain(w::MultiSegmentWell; kwarg...)
+
+    nf = number_of_faces(w)
+    nc = number_of_cells(w)
+
+    # Well material properties
+    λm = w.material_thermal_conductivity
+    λm = (length(λm) == nf) ? λm : fill(λm, nf)
+    
+    ρ = w.material_density
+    ρ = (length(ρ) == nc) ? ρ : fill(ρ, nc)
+        
+    C = w.material_heat_capacity
+    C = (length(C) == nc) ? C : fill(C, nc)
+
+    ϕ = w.void_fraction
+    ϕ = (length(ϕ) == nc) ? ϕ : fill(ϕ, nc)
+    
+    wd = DataDomain(w;
+        material_thermal_conductivity = (λm, Faces()),
+        material_density = (ρ, Cells()),
+        material_heat_capacity = (C, Cells()),
+        void_fraction = (ϕ, Cells()),
+        kwarg...
+    )
+    return wd
+
+end
+
+function well_domain(w::DataDomain; kwarg...)
+    return w
+end
+
 export get_model_wells
 
 function get_model_wells(case::JutulCase)
@@ -286,6 +330,7 @@ low values can lead to slow convergence.
   so comments about changing limits near zero above does not apply to typical
   reservoir temperatures)
 - `dT_max_abs=50.0`: Maximum absolute change in temperature (in °K/°C)
+- `T_min=convert_to_si(0.0, :Celsius)`: Minimum temperature in model (hard limit)
 - `fast_flash=false`: Shorthand to enable `flash_reuse_guess` and
   `flash_stability_bypass`. These options can together speed up the time spent
   in flash solver for compositional models. Options are based on "Increasing the
@@ -303,6 +348,7 @@ low values can lead to slow convergence.
 """
 function setup_reservoir_model(reservoir::DataDomain, system::JutulSystem;
         wells = [],
+        tracers = [],
         context = DefaultContext(),
         reservoir_context = nothing,
         general_ad = false,
@@ -323,6 +369,7 @@ function setup_reservoir_model(reservoir::DataDomain, system::JutulSystem;
         dr_max = Inf,
         dT_max_rel = nothing,
         dT_max_abs = 50.0,
+        T_min = convert_to_si(0.0, :Celsius),
         fast_flash = false,
         can_shut_wells = true,
         flash_reuse_guess = fast_flash,
@@ -342,7 +389,9 @@ function setup_reservoir_model(reservoir::DataDomain, system::JutulSystem;
     if !(wells isa AbstractArray)
         wells = [wells]
     end
-    old_wells = wells
+    if !(tracers isa AbstractArray)
+        tracers = [tracers]
+    end
     mswells = []
     stdwells = []
     for (i, w) in enumerate(wells)
@@ -393,6 +442,7 @@ function setup_reservoir_model(reservoir::DataDomain, system::JutulSystem;
         dz_max = dz_max,
         dT_max_rel = dT_max_rel,
         dT_max_abs = dT_max_abs,
+        T_min = T_min,
         flash_reuse_guess = flash_reuse_guess,
         flash_stability_bypass = flash_stability_bypass
     )
@@ -431,7 +481,7 @@ function setup_reservoir_model(reservoir::DataDomain, system::JutulSystem;
             else
                 well_context = context
             end
-            w_domain = DataDomain(w)
+            w_domain = well_domain(w)
             wc = w.perforations.reservoir
             c = map_well_nodes_to_reservoir_cells(w, reservoir)
             for propk in [:temperature, :pvtnum]
@@ -483,6 +533,9 @@ function setup_reservoir_model(reservoir::DataDomain, system::JutulSystem;
         assemble_wells_together = assemble_wells_together,
         immutable_model = immutable_model,
     )
+    if length(tracers) > 0
+        add_tracers_to_model!(model, tracers)
+    end
     if extra_out
         parameters = setup_parameters(model, parameters)
         out = (model, parameters)
@@ -496,6 +549,143 @@ function setup_reservoir_model(reservoir::DataDomain, label::Symbol; kwarg...)
     return setup_reservoir_model(reservoir, Val(label); kwarg...)
 end
 
+
+function setup_reservoir_model(model_template::MultiModel; kwarg...)
+    return setup_reservoir_model(missing, model_template; kwarg...)
+end
+
+"""
+    setup_reservoir_model(reservoir::DataDomain, model_template::MultiModel; wells = [])
+    setup_reservoir_model(model_template::MultiModel; wells = [])
+
+Set up a reservoir model with another model as a template. The template model is
+used to define the parameters and variables so that the resulting model is as
+similar to the original model as possible. The main purpose of this model is to
+"resetup" a model with for example a new set of wells.
+
+It is also possible to pass a `reservoir` domain to set up the model with a new
+domain and new wells, copying over properties and secondary variables.
+
+Note that the transfer process is not perfect and some variables might not be
+copied correctly if you are using a highly customized model. For instance, the
+treatment of regions is quite simple as it is based on the field name `region`
+that is initialized to one for each cell.
+"""
+function setup_reservoir_model(reservoir::Union{DataDomain, Missing, Nothing}, model_template::MultiModel;
+        wells = [],
+        extra_out = true,
+        thermal = model_is_thermal(model_template),
+        reservoir_only = missing,
+        parameters = missing,
+        kwarg...
+    )
+    rmodel_template = reservoir_model(model_template)
+    function welltype(x::SimulationModel)
+        repr = x.domain.representation
+        repr::WellDomain
+        return typeof(repr)
+    end
+
+    function all_variable_names(x)
+        pvarkeys = keys(Jutul.get_primary_variables(x))
+        svarkeys = keys(Jutul.get_secondary_variables(x))
+        prmkeys = keys(Jutul.get_parameters(x))
+        return Symbol[pvarkeys..., svarkeys..., prmkeys...]
+    end
+    # Store the wells by type and name for lookup
+    wells_by_type = Dict{Type, Any}()
+    wells_by_name = Dict{Symbol, Any}()
+    for (name, submodel) in pairs(model_template.models)
+        if model_or_domain_is_well(submodel)
+            dtype = welltype(submodel)
+            if !haskey(wells_by_type, dtype)
+                wells_by_type[dtype] = submodel
+            end
+            wells_by_name[name] = submodel
+        end
+    end
+    if ismissing(reservoir_only)
+        if length(keys(wells_by_name)) == 0
+            reservoir_only = Symbol[]
+        else
+            present_in_wells = Symbol[]
+            for (k, v) in pairs(wells_by_name)
+                for name in all_variable_names(v)
+                    push!(present_in_wells, name)
+                end
+            end
+            unique!(present_in_wells)
+            reservoir_only = setdiff(all_variable_names(rmodel_template), present_in_wells)
+        end
+        push!(reservoir_only, :FluidVolume)
+        push!(reservoir_only, :StaticFluidVolume)
+        push!(reservoir_only, :Transmissibilities)
+    end
+    if ismissing(reservoir) || isnothing(reservoir)
+        reservoir = reservoir_domain(rmodel_template)
+    end
+    sys = rmodel_template.system
+
+    model = setup_reservoir_model(reservoir, sys;
+        wells = wells,
+        thermal = thermal,
+        extra_out = false,
+        kwarg...
+    )
+
+    # Copy over variables and parameters from the template model
+    rmodel = reservoir_model(model)
+    transfer_variables_and_parameters!(rmodel, rmodel_template)
+
+    if length(wells) > 0
+        # Rule:
+        # 1. If type matches and name matches, use the old well as template
+        # 2. If name matches, but type does not, use the well with the same type in old wells
+        # 3. Otherwise, if there are wells of the same type, use a sample well of that type
+        # 4. If neither apply or there are no wells we should just copy the matching
+        #    variables from the reservoir model, taking care to not copy over
+        #    FluidVolume since that is strictly speaking a rock property. Other
+        #    exceptions could be added to this list.
+        for well in wells
+            well::WellDomain
+            wname = well.name
+            wtype = typeof(well)
+            if haskey(wells_by_name, wname)
+                template = wells_by_name[wname]
+                by_name = welltype(template) == wtype
+            else
+                by_name = false
+            end
+            add_new = true
+            if by_name
+                template = wells_by_name[wname]
+            elseif haskey(wells_by_type, wtype)
+                template = wells_by_type[wtype]
+            else
+                template = rmodel_template
+                add_new = false
+            end
+            transfer_variables_and_parameters!(model[wname], template,
+                add_new = true,
+                skip = reservoir_only,
+                check_type = add_new
+            )
+        end
+    end
+    if extra_out
+        prm = setup_parameters(model)
+        if !ismissing(parameters)
+            for (k, v) in parameters[:Reservoir]
+                prm[:Reservoir][k] = deepcopy(v)
+            end
+        end
+        retval = (model, prm)
+    else
+        retval = model
+    end
+    return retval
+end
+
 function set_reservoir_variable_defaults!(model;
         p_min,
         p_max,
@@ -506,13 +696,14 @@ function set_reservoir_variable_defaults!(model;
         dr_max,
         dT_max_rel = nothing,
         dT_max_abs = nothing,
+        T_min = convert_to_si(0.0, :Celsius),
         flash_reuse_guess = false,
         flash_stability_bypass = flash_reuse_guess
     )
     # Replace various variables - if they are available
     replace_variables!(model, OverallMoleFractions = OverallMoleFractions(dz_max = dz_max), throw = false)
     replace_variables!(model, Saturations = Saturations(ds_max = ds_max), throw = false)
-    replace_variables!(model, Temperature = Temperature(max_rel = dT_max_rel, max_abs = dT_max_abs), throw = false)
+    replace_variables!(model, Temperature = Temperature(max_rel = dT_max_rel, max_abs = dT_max_abs, min = T_min), throw = false)
     replace_variables!(model, ImmiscibleSaturation = ImmiscibleSaturation(ds_max = ds_max), throw = false)
     replace_variables!(model, BlackOilUnknown = BlackOilUnknown(ds_max = ds_max, dr_max = dr_max), throw = false)
 
@@ -929,7 +1120,8 @@ function set_default_cnv_mb_inner!(tol, model;
     if model isa Jutul.CompositeModel && hasproperty(model.system.systems, :flow)
         sys = flow_system(model.system)
     end
-    if sys isa ImmiscibleSystem || sys isa BlackOilSystem || sys isa CompositionalSystem
+    if sys isa SinglePhaseSystem || sys isa ImmiscibleSystem || 
+        sys isa BlackOilSystem || sys isa CompositionalSystem
         is_well = model_or_domain_is_well(model)
         if is_well
             if physical_representation(model) isa SimpleWell
@@ -967,6 +1159,7 @@ function setup_reservoir_cross_terms!(model::MultiModel)
     has_thermal = haskey(rmodel.equations, :energy_conservation)
     conservation = :mass_conservation
     energy = :energy_conservation
+    handled_btes_cts = Vector{String}(undef, 0)
     for (k, m) in pairs(model.models)
         if k == :Reservoir
             # These are set up from wells via symmetry
@@ -996,9 +1189,40 @@ function setup_reservoir_cross_terms!(model::MultiModel)
                     add_cross_term!(model, ct, target = :Reservoir, source = k, equation = conservation)
                 end
                 if has_thermal
-                    CI = 1000 .* WI
-                    ct = ReservoirFromWellThermalCT(CI, WI, rc, wc)
+                    WIth = vec(g.perforations.WIth)
+                    ct = ReservoirFromWellThermalCT(WIth, WI, rc, wc)
                     add_cross_term!(model, ct, target = :Reservoir, source = k, equation = energy)
+                end
+                is_btes = g isa MultiSegmentWell && 
+                    m.data_domain.representation.type == :btes
+                if is_btes
+                    WIth_grout = vec(g.perforations.WIth_grout)
+                    # TODO: Avoid hard-coded index for BTES bottom cell
+                    if length(wc) < number_of_cells(g)-1
+                        btes_bottom_cell = wc[1]-1
+                    else
+                        btes_bottom_cell = wc[end]
+                    end
+                    name = string(k)
+                    if !contains(name, "_supply")
+                        continue
+                    end
+                    btes_name = replace(name, "_supply" => "")
+                    if btes_name in handled_btes_cts
+                        continue
+                    end
+
+                    this = Symbol(btes_name*"_supply")
+                    other = Symbol(btes_name*"_return")
+
+                    ct_mass = JutulDarcy.BTESWellSupplyToReturnMassCT([btes_bottom_cell])
+                    ct_energy = JutulDarcy.BTESWellSupplyToReturnEnergyCT([btes_bottom_cell])
+                    ct_grout = JutulDarcy.BTESWellGroutEnergyCT(WIth_grout, wc)
+                    add_cross_term!(model, ct_mass, target = other, source = this, equation = conservation)
+                    add_cross_term!(model, ct_energy, target = other, source = this, equation = energy)
+                    add_cross_term!(model, ct_grout, target = other, source = this, equation = energy)
+                    
+                    push!(handled_btes_cts, btes_name)
                 end
             end
         end
@@ -1137,6 +1361,10 @@ function setup_reservoir_state(model::MultiModel; kwarg...)
 end
 
 function setup_reservoir_state(model, init)
+    if haskey(init, :Reservoir) && model isa MultiModel
+        # Could be output from a previous call to the same routine
+        init = init[:Reservoir]
+    end
     return setup_reservoir_state(model; pairs(init)...)
 end
 
@@ -1161,6 +1389,12 @@ function setup_reservoir_state(rmodel::SimulationModel; kwarg...)
             push!(found, k)
         end
         res_init[k] = v
+    end
+    tc = get(rmodel.primary_variables, :TracerConcentrations, nothing)
+    if  !isnothing(tc) && !haskey(res_init, :TracerConcentrations)
+        # Tracers are usually safe to default = 0
+        res_init[:TracerConcentrations] = Jutul.default_values(rmodel, tc)
+        push!(found, :TracerConcentrations)
     end
     handle_alternate_primary_variable_spec!(res_init, found, rmodel, rmodel.system)
     if length(found) != length(pvars)
@@ -2145,6 +2379,7 @@ export generate_jutuldarcy_examples
         name = "jutuldarcy_examples";
         makie = nothing,
         project = true,
+        print = true,
         force = false
     )
 
@@ -2163,15 +2398,16 @@ function generate_jutuldarcy_examples(
         pth = pwd(),
         name = "jutuldarcy_examples";
         makie = nothing,
-        project = true,
+        project = false,
+        print = true,
         force = false
     )
     if !ispath(pth)
-        error("Destionation $pth does not exist. Specify a folder.")
+        error("Destination $pth does not exist. Specify a folder.")
     end
     dest = joinpath(pth, name)
     jdir, = splitdir(pathof(JutulDarcy))
-    ex_dir = joinpath(jdir, "..", "examples")
+    ex_dir = realpath(joinpath(jdir, "..", "examples"))
 
     if ispath(dest)
         if !force
@@ -2182,9 +2418,29 @@ function generate_jutuldarcy_examples(
     if !isnothing(makie)
         replace_makie_calls!(dest, makie)
     end
-    proj_location = joinpath(jdir, "..", "docs", "Project.toml")
-    cp(ex_dir, proj_location, force = true)
-    chmod(ex_dir, 0o777, recursive = true)
+    proj_location = realpath(joinpath(jdir, "..", "docs", "Project.toml"))
+    if project
+        cp(proj_location, joinpath(dest, "Project.toml"), force = true)
+    end
+    if print
+        jutul_message("Examples", "Examples successfully written! Path to examples:\n\t$ex_dir", color = :green)
+        println("The examples may require additional packages to run. If you want to add all packages required by any example you may run the following Julia command:\n")
+        modules = String[]
+        for line in readlines(proj_location)
+            modname = line |> split |> first
+            if startswith(modname, '[')
+                continue
+            end
+            if !isnothing(makie) && modname == "GLMakie"
+                modname = makie
+            end
+            push!(modules, modname)
+        end
+        modules_str = join(map(x -> "\"$x\"", modules), ',')
+        println("using Pkg; Pkg.add([$modules_str])\n")
+    end
+    println("You can also manually add the modules required by any given example by looking at the using statement at top of each file.")
+    chmod(dest, 0o777, recursive = true)
     return dest
 end
 
@@ -2355,4 +2611,64 @@ function reservoir_measurables(model, ws, states = missing; type = :field)
     @. fgor = fgpr./max.(fopr, 1e-12)
 
     return out
+end
+
+
+# Utility to transfer one type of variables or parameters from one model to another
+function transfer_variables_or_parameters!(vars, new_model::SimulationModel, replacements; skip = Symbol[], add_new = true)
+    for (varname, vardef) in pairs(replacements)
+        if !haskey(vars, varname) && !add_new
+            continue
+        end
+        if varname in skip
+            continue
+        end
+        Jutul.delete_variable!(new_model, varname)
+        vardef = deepcopy(vardef)
+        if hasproperty(vardef, :regions) && !isnothing(vardef)
+            entity = Jutul.associated_entity(vardef)
+            n = count_entities(new_model.domain.representation, entity)
+            empty!(vardef.regions)
+            for i in 1:n
+                push!(vardef.regions, 1)
+            end
+        end
+        vars[varname] = vardef
+    end
+    return vars
+end
+
+# Utility to transfer variables and parameters from one model to another
+function transfer_variables_and_parameters!(new_model, old_model;
+        primary = true,
+        secondary = true,
+        parameters = true,
+        add_new = true,
+        check_type = true,
+        skip = Symbol[]
+    )
+    if check_type
+        new_type = typeof(new_model)
+        old_type = typeof(old_model)
+        @assert new_type == old_type "Models must be of the same type ($new_type ≠ $old_type)"
+    end
+    function transfer!(x)
+        transfer_variables_or_parameters!(
+            getproperty(new_model, x),
+            new_model,
+            getproperty(old_model, x),
+            skip = skip,
+            add_new = add_new
+        )
+    end
+    if primary
+        transfer!(:primary_variables)
+    end
+    if secondary
+        transfer!(:secondary_variables)
+    end
+    if parameters
+        transfer!(:parameters)
+    end
+    return new_model
 end

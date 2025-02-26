@@ -2,19 +2,78 @@ using JutulDarcy
 using Jutul
 using Literate
 using Documenter
+using OrderedCollections
 
 using DocumenterCitations
 using DocumenterVitepress
 ##
 cd(@__DIR__)
-function build_jutul_darcy_docs(build_format = nothing;
+
+function dir_to_doc_name(x::String)
+    x = replace(x, "_" => " ")
+    x = uppercase(x[1:1])*x[2:end]
+    return x
+end
+
+function get_example_paths(; check_empty = true)
+    basepth = joinpath(@__DIR__, "..", "examples")
+    examples = OrderedDict()
+    examples["introduction"] = []
+    examples["workflow"] = []
+    examples["data_assimilation"] = []
+    examples["geothermal"] = []
+    examples["compositional"] = []
+    examples["discretization"] = []
+    examples["properties"] = []
+    examples["validation"] = []
+    for excat in readdir(basepth)
+        if isdir(joinpath(basepth, excat))
+            for exfile in readdir(joinpath(basepth, excat))
+                if endswith(exfile, ".jl")
+                    if !haskey(examples, excat)
+                        examples[excat] = []
+                    end
+                    filename = first(splitext(exfile))
+                    push!(examples[excat], filename)
+                end
+            end
+        end
+    end
+    if check_empty
+        for (k, v) in pairs(examples)
+            @assert length(examples[k]) > 0 "No examples found for category $k"
+        end
+    end
+    return examples
+end
+
+function update_footer(content, subdir, exname)
+    return content*"\n\n # ## Example on GitHub\n "*
+    "# If you would like to run this example yourself, it can be downloaded from "*
+    "the JutulDarcy.jl GitHub repository [as a script](https://github.com/sintefmath/JutulDarcy.jl/blob/main/examples/$subdir/$exname.jl), "*
+    "or as a [Jupyter Notebook](https://github.com/sintefmath/JutulDarcy.jl/blob/gh-pages/dev/final_site/notebooks/$subdir/$exname.ipynb)"
+end
+
+function build_jutul_darcy_docs(
+        build_format = nothing;
         build_examples = true,
+        build_docs = true,
         build_validation_examples = build_examples,
         build_notebooks = true,
+        examples_explicit_list = missing,
+        skip_examples = String[],
         clean = true,
         deploy = true,
         use_vitepress = !Sys.iswindows()
     )
+    if examples_explicit_list isa String
+        examples_explicit_list = [examples_explicit_list]
+    end
+    examples_explicit_list::Union{Vector{String}, Missing}
+    has_explicit_list = !ismissing(examples_explicit_list)
+    if has_explicit_list
+        @info "Building only examples as examples_explicit_list was specified" examples_explicit_list
+    end
     DocMeta.setdocmeta!(JutulDarcy, :DocTestSetup, :(using JutulDarcy); recursive=true)
     DocMeta.setdocmeta!(Jutul, :DocTestSetup, :(using Jutul); recursive=true)
     bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"))
@@ -23,79 +82,59 @@ function build_jutul_darcy_docs(build_format = nothing;
     # Base directory
     jutul_dir = realpath(joinpath(@__DIR__, ".."))
     # Convert examples as .jl files to markdown
-    examples = [
-        # "Intro" => "intro_example",
-        "Intro: Gravity segregation" => "two_phase_gravity_segregation",
-        "Intro: Two-phase Buckley-Leverett" => "two_phase_buckley_leverett",
-        "Intro: Wells" => "wells_intro",
-        "Intro: Simulating Eclipse/DATA input files" => "data_input_file",
-        "Intro: Sensitivities in JutulDarcy" => "intro_sensitivities",
-        "Intro: Compositional flow" => "co2_brine_2d_vertical",
-        "CO2 injection in saline aquifer" => "co2_sloped",
-        "Consistent discretizations: Average MPFA and nonlinear TPFA" => "consistent_avgmpfa",
-        "High resolution and consistency: WENO, NTPFA and AvgMPFA" => "mpfa_weno_discretizations",
-        "Quarter-five-spot with variation" => "five_spot_ensemble",
-        "Gravity circulation with CPR preconditioner" => "two_phase_unstable_gravity",
-        "Properties: CO2-brine correlations with salinity" => "co2_props",
-        "Properties: Relative Permeabilities in JutulDarcy" => "relperms",
-        "Model coarsening" => "model_coarsening",
-        "History matching a coarse model - CGNet" => "cgnet_egg",
-        "Compositional with five components" => "compositional_5components",
-        "Parameter matching of Buckley-Leverett" => "optimize_simple_bl",
-        "Hybrid simulation with relative permeability" => "hybrid_simulation_relperm",
-        "Validation: SPE1" => "validation_spe1",
-        "Validation: SPE9" => "validation_spe9",
-        "Validation: Compositional" => "validation_compositional",
-        "Validation: Egg" => "validation_egg",
-        "Validation: OLYMPUS 1" => "validation_olympus_1",
-        "Validation: Norne" => "validation_norne_nohyst",
-        "Validation: MRST input files" => "validation_mrst"
-    ]
-    examples_markdown = []
+    examples = get_example_paths(check_empty = !has_explicit_list)
     validation_markdown = []
-    intros_markdown = []
-    function update_footer(content, pth)
-        return content*"\n\n # ## Example on GitHub\n "*
-        "# If you would like to run this example yourself, it can be downloaded from "*
-        "the JutulDarcy.jl GitHub repository [as a script](https://github.com/sintefmath/JutulDarcy.jl/blob/main/examples/$pth.jl), "*
-        "or as a [Jupyter Notebook](https://github.com/sintefmath/JutulDarcy.jl/blob/gh-pages/dev/final_site/notebooks/$pth.ipynb)"
-    end
+    examples_by_name = OrderedDict{String, Any}()
     if clean
-        for (ex, pth) in examples
-            delpath = joinpath(@__DIR__, "src", "examples", "$pth.md")
-            if isfile(delpath)
-                println("Deleting generated example \"$ex\":\n\t$delpath")
-                rm(delpath)
-            else
-                println("Did not find generated example \"$ex\", skipping removal:\n\t$delpath")
+        for (category, example_set) in pairs(examples)
+            for ex in example_set
+                delpath = joinpath(@__DIR__, "src", "examples", category, "$ex.md")
+                if isfile(delpath)
+                    println("Deleting generated example \"$ex\":\n\t$delpath")
+                    rm(delpath)
+                else
+                    println("Did not find generated example \"$ex\", skipping removal:\n\t$delpath")
+                end
             end
         end
     end
-    example_path(pth) = joinpath(jutul_dir, "examples", "$pth.jl")
+    example_path(cname, pth) = joinpath(jutul_dir, "examples", cname, "$pth.jl")
     out_dir = joinpath(@__DIR__, "src", "examples")
     notebook_dir = joinpath(@__DIR__, "assets")
-    for (ex, pth) in examples
-        in_pth = example_path(pth)
-        is_validation = startswith(ex, "Validation:")
-        is_intro = startswith(ex, "Intro: ")
-        is_example = !(is_intro || is_validation)
-        if is_validation
+    for (category, example_set) in pairs(examples)
+        if category == "validation"
             ex_dest = validation_markdown
             do_build = build_validation_examples
         else
-            if is_intro
-                ex_dest = intros_markdown
-            else
-                ex_dest = examples_markdown
-            end
+            ex_dest = []
+            examples_by_name[category] = ex_dest
             do_build = build_examples
         end
-        if do_build
-            push!(ex_dest, ex => joinpath("examples", "$pth.md"))
-            upd(content) = update_footer(content, pth)
-            Literate.markdown(in_pth, out_dir, preprocess = upd)
+        for exname in example_set
+            if has_explicit_list
+                if exname in examples_explicit_list
+                    jutul_message("Examples", "$category/$exname added to build from explicit list.", color = :green)
+                else
+                    jutul_message("Examples", "$category/$exname not in explicit list, skipping.", color = :yellow)
+                    continue
+                end
+            elseif do_build && !(exname in skip_examples)
+                jutul_message("Examples", "$category/$exname was added.", color = :green)
+            else
+                jutul_message("Examples", "$category/$exname was skipped.", color = :blue)
+                continue
+            end
+            in_pth = example_path(category, exname)
+            push!(ex_dest, joinpath("examples", category, "$exname.md"))
+            upd(content) = update_footer(content, category, exname)
+            Literate.markdown(in_pth, joinpath(out_dir, category), preprocess = upd)
         end
     end
+    examples_markdown = []
+    for (k, v) in pairs(examples_by_name)
+        push!(examples_markdown, dir_to_doc_name(k) => v)
+    end
+
     ## Docs
     if isnothing(build_format)
         if use_vitepress
@@ -116,56 +155,74 @@ function build_jutul_darcy_docs(build_format = nothing;
             )
         end
     end
-    makedocs(;
-        modules=[JutulDarcy, Jutul],
-        authors="Olav Møyner <olav.moyner@sintef.no> and contributors",
-        repo="https://github.com/sintefmath/JutulDarcy.jl/blob/{commit}{path}#{line}",
-        sitename="JutulDarcy.jl",
-        warnonly=false,
-        checkdocs=:exports,
-        plugins=[bib],
-        format=build_format,
-        pages=[
-            "Introduction" => [
-                "JutulDarcy.jl" => "index.md",
-                "Getting started" =>"man/intro.md",
-                "Your first JutulDarcy.jl simulation" => "man/first_ex.md",
-                "FAQ" => "extras/faq.md"
-            ],
-            "Manual" => [
+    build_pages = [
+        "Manual" => [
+                "Introduction" => [
+                    "JutulDarcy.jl" => "index.md",
+                    "Getting started" =>"man/intro.md",
+                    "Your first JutulDarcy.jl simulation" => "man/first_ex.md",
+                    "FAQ" => "extras/faq.md",
+                ],
+                "Fundamentals" => [
                     "man/highlevel.md",
                     "man/basics/input_files.md",
-                    "man/basics/forces.md",
                     "man/basics/systems.md",
-                    "man/basics/wells.md",
                     "man/basics/solution.md",
+                ],
+                "Detailed API" => [
+                    "man/basics/forces.md",
+                    "man/basics/wells.md",
                     "man/basics/primary.md",
                     "man/basics/secondary.md",
                     "man/basics/parameters.md",
                     "man/basics/plotting.md",
                     "man/basics/utilities.md",
-                    "man/basics/package.md"
-                    ],
-            "Further reading" => [
-                "man/advanced/mpi.md",
-                "man/advanced/gpu.md",
-                "man/advanced/compiled.md",
-                "Jutul functions" => "ref/jutul.md",
-                "Bibliography" => "extras/refs.md"
+                ],
+                "Parallelism and compilation" => [
+                    "man/advanced/mpi.md",
+                    "man/advanced/gpu.md",
+                    "man/advanced/compiled.md"
+                ],
+                "References" => [
+                    "man/basics/package.md",
+                    "Jutul functions" => "ref/jutul.md",
+                    "Bibliography" => "extras/refs.md"
+                ],
             ],
-            "Examples: Introduction" => intros_markdown,
-            "Examples: Usage" => examples_markdown,
-            "Examples: Validation" => validation_markdown
-        ],
-    )
+        "Examples" => examples_markdown,
+        "Validation" => [
+            "man/validation.md",
+            "Models" => validation_markdown,
+        ]
+    ]
+    # for (k, subpages) in build_pages
+    #     println("$k")
+    #     @info "$k" subpages
+    # end
+    if build_docs
+        makedocs(;
+            modules = [JutulDarcy, Jutul],
+            authors = "Olav Møyner <olav.moyner@sintef.no> and contributors",
+            repo = "https://github.com/sintefmath/JutulDarcy.jl/blob/{commit}{path}#{line}",
+            warnonly = false,
+            sitename = "JutulDarcy.jl",
+            checkdocs = :exports,
+            plugins = [bib],
+            format = build_format,
+            pages = build_pages,
+        )
+    end
     if build_notebooks
         # Subfolder of final site build folder
         notebook_dir = joinpath(@__DIR__, "build", "final_site", "notebooks")
         mkpath(notebook_dir)
-        for (ex, pth) in examples
-            in_pth = example_path(pth)
-            @info "$ex Writing notebook to $notebook_dir"
-            Literate.notebook(in_pth, notebook_dir, execute = false)
+        for (category, example_set) in pairs(examples)
+            for exname in example_set
+                in_pth = example_path(category, exname)
+                ex_notebook_dir = joinpath(notebook_dir, category)
+                @info "$exname Writing notebook to $ex_notebook_dir"
+                Literate.notebook(in_pth, ex_notebook_dir, execute = false)
+            end
         end
     end
     if deploy
@@ -178,15 +235,31 @@ function build_jutul_darcy_docs(build_format = nothing;
         )
     end
 end
-##
-# build_jutul_darcy_docs(
-#     build_examples = false,
-#     build_validation_examples = false,
-#     build_notebooks = false,
-#     deploy = false
-# )
-build_jutul_darcy_docs()
+# To preview, go to the docs folder and run:
+# # DocumenterVitepress.dev_docs("build")
+# To only build some examples you can set
+# ENV["JUTULDARCY_DOCS_EXAMPLES_SKIP"] = 1
+# You can also enable build after (Linux only):
+# ENV["JUTULDARCY_RUN_VITEPRESS"] = 1
+if get(ENV, "JUTULDARCY_DOCS_EXAMPLES_SKIP", "0") == "1"
+    # You can add a list of examples to build by running
+    # examples_to_build = ["geothermal_1well"]
+    if isdefined(Main, :examples_to_build)
+        ex_list = examples_to_build
+    else
+        ex_list = missing
+    end
+    build_jutul_darcy_docs(
+        build_examples = false,
+        build_validation_examples = false,
+        build_notebooks = false,
+        examples_explicit_list = ex_list,
+        deploy = false
+    )
+else
+    build_jutul_darcy_docs()
+end
 
-# ```@autodocs
-# Modules = [JutulDarcy]
-# ```
+if get(ENV, "JUTULDARCY_RUN_VITEPRESS", "0") == "1" && !Sys.iswindows()
+    DocumenterVitepress.dev_docs("build")
+end

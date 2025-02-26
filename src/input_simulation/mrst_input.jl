@@ -132,6 +132,7 @@ function get_well_from_mrst_data(
     n = length(rc)
     # dz = awrap(w.dZ)
     WI = awrap(W_mrst["WI"])
+    WIth = haskey(W_mrst, "WIth") ? awrap(W_mrst["WIth"]) : fill(0.0, length(WI))
     cell_centroids = copy((mrst_data["G"]["cells"]["centroids"])')
     centers = cell_centroids[:, rc]
     if size(centers, 1) == 2
@@ -211,7 +212,7 @@ function get_well_from_mrst_data(
         else
             L_i = 1.0
         end
-        W = MultiSegmentWell(rc, pvol, centers, WI = WI, reference_depth = ref_depth,
+        W = MultiSegmentWell(rc, pvol, centers, WI = WI, WIth = WIth, reference_depth = ref_depth,
                                                         dz = dz,
                                                         N = well_topo,
                                                         name = Symbol(nm),
@@ -225,7 +226,7 @@ function get_well_from_mrst_data(
         dz = z_res .- ref_depth
         z = [ref_depth]
         accumulator_volume = volume*mean(well_cell_volume)
-        W = SimpleWell(rc, WI = WI, dz = dz, surface_conditions = cond, name = Symbol(nm), volume = accumulator_volume)
+        W = SimpleWell(rc, WI = WI, WIth = WIth, dz = dz, surface_conditions = cond, name = Symbol(nm), volume = accumulator_volume)
         reservoir_cells = [rc[1]]
     else
         error("Unsupported well type $well_type (can be :ms, :simple or :std)")
@@ -483,6 +484,17 @@ function deck_relperm(runspec, props; oil, water, gas, satnum = nothing)
                 push!(tables_krow, krow)
             end
         end
+        if haskey(props, "SLGOF")
+            for (reg, slgof) in enumerate(props["SLGOF"])
+                swcon = get_swcon(tables_krw, reg)
+                sgof = copy(slgof)
+                sgof[:, 1] = 1.0 .- sgof[:, 1]
+                sgof = sgof[end:-1:1, :]
+                krg, krog = table_to_relperm(sgof, swcon = swcon, first_label = :g, second_label = :og)
+                push!(tables_krg, krg)
+                push!(tables_krog, krog)
+            end
+        end
         if haskey(props, "SGOF")
             for (reg, sgof) in enumerate(props["SGOF"])
                 swcon = get_swcon(tables_krw, reg)
@@ -628,6 +640,8 @@ function deck_pc(props; oil, water, gas, satnum = nothing, is_co2 = false)
     if oil && gas
         if haskey(props, "SGOF")
             interp_og, found_pcog = get_pc(props["SGOF"], 4)
+        elseif haskey(props, "SLGOF")
+            interp_og, found_pcog = get_pc(props["SLGOF"], 4, sgn = -1)
         else
             interp_og, found_pcog = get_pc(props["SGFN"], 3)
         end
